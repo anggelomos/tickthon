@@ -1,0 +1,44 @@
+{
+  "id": "60c8d7b1e9b80e0595353bc6",
+  "projectId": "5f30772022d478db3ad1a9c2",
+  "repeatTaskId": "o3k8772022d478db3ad1d94j",
+  "sortOrder": 8796093022208,
+  "title": "Automation tasks",
+  "content": "",
+  "startDate": "2023-08-03T19:15:00.000+0000",
+  "timeZone": "America/Bogota",
+  "isFloating": false,
+  "reminder": "",
+  "reminders": [],
+  "exDate": [],
+  "priority": 0,
+  "status": 0,
+  "items": [],
+  "progress": 0,
+  "focusSummaries": [
+    {
+      "pomoDuration": 0,
+      "stopwatchDuration": 100
+    },
+    {
+      "pomoDuration": 260,
+      "stopwatchDuration": 0
+    }
+  ],
+  "modifiedTime": "2021-07-21T21:33:17.796+0000",
+  "tags": [
+    "test",
+    "unit"
+  ],
+  "columnId": null,
+  "etag": "muu17zqq",
+  "deleted": 0,
+  "createdTime": "2021-06-15T16:39:13.000+0000",
+  "creator": 114478622,
+  "childIds": [
+    "60c8d7b6e9b80e0595353bca",
+    "60c8d7b9e9b80e0595353bcf",
+    "60c8d7bbe9b80e0595353bd4"
+  ],
+  "kind": "TEXT"
+}

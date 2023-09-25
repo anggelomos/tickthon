@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+
+[project.urls]
+repository = "https://github.com/anggelomos/pytick"
+
+[project]
+name = "pytick"
+version = "0.0.1"
+description = "Yet another unofficial Ticktick API client, it is based on ticktick-py"
+readme = "README.md"
+authors = [{name = "anggelomos", email = "anggelomos@outlook.com"}]
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3.10",
+]
+dependencies = [
+    "requests",
+    "attrs",
+    "python-dateutil"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "twine",
+    "flake8",
+    "mypy",
+    "types-requests",
+    "types-python-dateutil"
+]

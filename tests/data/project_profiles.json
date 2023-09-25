@@ -1,0 +1,261 @@
+[
+{
+  "id": "90as8dfa09sd8f90asdf809",
+  "name": "test-project",
+  "isOwner": true,
+  "color": "#F1C231",
+  "inAll": true,
+  "sortOrder": 29686813949952,
+  "sortOption": {
+    "groupBy": "sortOrder",
+    "orderBy": "sortOrder"
+  },
+  "sortType": "sortOrder",
+  "userCount": 1,
+  "etag": "klj324",
+  "modifiedTime": "2023-07-24T12:35:17.571+0000",
+  "closed": null,
+  "muted": false,
+  "transferred": null,
+  "groupId": "470149b3aa83c1d125d57f01",
+  "viewMode": "list",
+  "notificationOptions": [],
+  "teamId": null,
+  "permission": "write",
+  "kind": "TASK",
+  "timeline": {
+    "range": "day",
+    "sortType": "sortOrder",
+    "sortOption": {
+      "groupBy": "sortOrder",
+      "orderBy": "sortOrder"
+    }
+  },
+  "needAudit": true,
+  "openToTeam": null,
+  "teamMemberPermission": null,
+  "source": 1
+},
+{
+  "id": "90as8dfa0as23dfsdf809",
+  "name": "test-project",
+  "isOwner": true,
+  "color": null,
+  "inAll": true,
+  "sortOrder": 5195192441238,
+  "sortOption": {
+    "groupBy": "sortOrder",
+    "orderBy": "sortOrder"
+  },
+  "sortType": "sortOrder",
+  "userCount": 1,
+  "etag": "klj324",
+  "modifiedTime": "2023-07-24T12:35:17.520+0000",
+  "closed": null,
+  "muted": false,
+  "transferred": null,
+  "groupId": "470149b3aa83c1d125d57f01",
+  "viewMode": "list",
+  "notificationOptions": [],
+  "teamId": null,
+  "permission": "write",
+  "kind": "TASK",
+  "timeline": {
+    "range": "day",
+    "sortType": "sortOrder",
+    "sortOption": {
+      "groupBy": "sortOrder",
+      "orderBy": "sortOrder"
+    }
+  },
+  "needAudit": true,
+  "openToTeam": null,
+  "teamMemberPermission": null,
+  "source": 1
+},
+{
+  "id": "90as8df23f2390asdf809",
+  "name": "test-project",
+  "isOwner": true,
+  "color": "#4AA6EF",
+  "inAll": true,
+  "sortOrder": 5167704650544,
+  "sortOption": {
+    "groupBy": "sortOrder",
+    "orderBy": "sortOrder"
+  },
+  "sortType": "sortOrder",
+  "userCount": 1,
+  "etag": "klj324",
+  "modifiedTime": "2023-07-24T12:35:17.512+0000",
+  "closed": null,
+  "muted": false,
+  "transferred": null,
+  "groupId": "470149b3aa83c1d125d57f01",
+  "viewMode": null,
+  "notificationOptions": [],
+  "teamId": null,
+  "permission": "write",
+  "kind": "TASK",
+  "timeline": {
+    "range": "day",
+    "sortType": "sortOrder",
+    "sortOption": {
+      "groupBy": "sortOrder",
+      "orderBy": "sortOrder"
+    }
+  },
+  "needAudit": true,
+  "openToTeam": null,
+  "teamMemberPermission": null,
+  "source": 1
+},
+{
+  "id": "90as823fw3sd8f90asdf809",
+  "name": "test-project",
+  "isOwner": true,
+  "color": null,
+  "inAll": true,
+  "sortOrder": 29411936043008,
+  "sortOption": {
+    "groupBy": "sortOrder",
+    "orderBy": "sortOrder"
+  },
+  "sortType": "sortOrder",
+  "userCount": 1,
+  "etag": "klj324",
+  "modifiedTime": "2023-07-24T12:35:17.565+0000",
+  "closed": null,
+  "muted": false,
+  "transferred": null,
+  "groupId": "470149b3aa83c1d125d57f01",
+  "viewMode": null,
+  "notificationOptions": [],
+  "teamId": null,
+  "permission": null,
+  "kind": "TASK",
+  "timeline": {
+    "range": "day",
+    "sortType": "sortOrder",
+    "sortOption": {
+      "groupBy": "sortOrder",
+      "orderBy": "sortOrder"
+    }
+  },
+  "needAudit": true,
+  "openToTeam": null,
+  "teamMemberPermission": null,
+  "source": 1
+},
+{
+  "id": "90as8dfa23432fdsasdf809",
+  "name": "test-project",
+  "isOwner": true,
+  "color": null,
+  "inAll": true,
+  "sortOrder": 40681930227712,
+  "sortOption": {
+    "groupBy": "sortOrder",
+    "orderBy": "sortOrder"
+  },
+  "sortType": "sortOrder",
+  "userCount": 1,
+  "etag": "klj324",
+  "modifiedTime": "2023-07-24T12:35:17.614+0000",
+  "closed": null,
+  "muted": false,
+  "transferred": null,
+  "groupId": "470149b3aa83c1d125d57f01",
+  "viewMode": "kanban",
+  "notificationOptions": [],
+  "teamId": null,
+  "permission": null,
+  "kind": "TASK",
+  "timeline": {
+    "range": "day",
+    "sortType": "sortOrder",
+    "sortOption": {
+      "groupBy": "sortOrder",
+      "orderBy": "sortOrder"
+    }
+  },
+  "needAudit": true,
+  "openToTeam": null,
+  "teamMemberPermission": null,
+  "source": 1
+},
+{
+  "id": "90as8df324fds8f90asdf809",
+  "name": "test-project",
+  "isOwner": true,
+  "color": null,
+  "inAll": true,
+  "sortOrder": 41781441855488,
+  "sortOption": {
+    "groupBy": "sortOrder",
+    "orderBy": "dueDate"
+  },
+  "sortType": "sortOrder",
+  "userCount": 1,
+  "etag": "klj324",
+  "modifiedTime": "2023-07-24T12:35:17.620+0000",
+  "closed": null,
+  "muted": false,
+  "transferred": null,
+  "groupId": "470149b3aa83c1d125d57f01",
+  "viewMode": "kanban",
+  "notificationOptions": [],
+  "teamId": null,
+  "permission": null,
+  "kind": "TASK",
+  "timeline": {
+    "range": "day",
+    "sortType": "sortOrder",
+    "sortOption": {
+      "groupBy": "sortOrder",
+      "orderBy": "sortOrder"
+    }
+  },
+  "needAudit": true,
+  "openToTeam": null,
+  "teamMemberPermission": null,
+  "source": 1
+},
+{
+  "id": "90as8d234sdf9sd8f90asdf809",
+  "name": "test-project",
+  "isOwner": true,
+  "color": null,
+  "inAll": true,
+  "sortOrder": 40132174413824,
+  "sortOption": {
+    "groupBy": "sortOrder",
+    "orderBy": "sortOrder"
+  },
+  "sortType": "sortOrder",
+  "userCount": 1,
+  "etag": "klj324",
+  "modifiedTime": "2023-07-24T12:35:17.603+0000",
+  "closed": null,
+  "muted": false,
+  "transferred": null,
+  "groupId": "470149b3aa83c1d125d57f01",
+  "viewMode": "kanban",
+  "notificationOptions": [],
+  "teamId": null,
+  "permission": null,
+  "kind": "TASK",
+  "timeline": {
+    "range": "day",
+    "sortType": "sortOrder",
+    "sortOption": {
+      "groupBy": "sortOrder",
+      "orderBy": "sortOrder"
+    }
+  },
+  "needAudit": true,
+  "openToTeam": null,
+  "teamMemberPermission": null,
+  "source": 1
+}
+]
