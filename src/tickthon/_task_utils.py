@@ -104,11 +104,11 @@ def _get_focus_time(raw_task: dict) -> float:
     return focus_time
 
 
-def _get_task_date(task_timezone: str, task_start_date: str) -> str:
+def _get_task_date(raw_task_timezone: str, task_start_date: str) -> str:
     """Returns the date of a task taking into account the timezone.
 
     Args:
-        task_timezone: The timezone of the task.
+        raw_task_timezone: The timezone of the task.
         task_start_date: The start date of the task.
 
     Returns:
@@ -117,7 +117,7 @@ def _get_task_date(task_timezone: str, task_start_date: str) -> str:
     if not task_start_date:
         return ""
 
-    task_timezone = tz.gettz(task_timezone)
+    task_timezone = tz.gettz(raw_task_timezone)
     task_raw_date = parser.parse(task_start_date)
 
     localized_task_date = task_raw_date.astimezone(task_timezone)

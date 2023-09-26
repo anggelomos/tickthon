@@ -2,8 +2,7 @@ from enum import Enum
 from typing import Optional
 import secrets
 
-import requests
-from requests import Response, HTTPError
+from requests import Session, Response
 
 
 class RequestTypes(Enum):
@@ -26,7 +25,7 @@ class TicktickAPI:
                'x-device': X_DEVICE_}
 
     def __init__(self, username: str, password: str):
-        self.session = requests.Session()
+        self.session = Session()
         self.session.headers.update({"Content-Type": "application/json",
                                      "User-Agent": self.USER_AGENT,
                                      "x-device": self.X_DEVICE_
@@ -49,11 +48,7 @@ class TicktickAPI:
         }
 
         response = self.post(self.SIGNIN_URL, data=payload, token_required=False)
-
-        if response.status_code != 200:
-            raise HTTPError("Failed to login using the API "
-                            f"Request status code: {response.status_code}, "
-                            f"Request message: {response.text}")
+        response.raise_for_status()
 
         return response.json()["token"]
 
@@ -107,10 +102,6 @@ class TicktickAPI:
         """
 
         response = self._base_request(RequestTypes.GET, url, data, token_required)
-
-        if response.status_code != 200:
-            raise HTTPError(f"Failed send get request using the API. "
-                            f"Request status code: {response.status_code}, "
-                            f"Request message: {response.text}")
+        response.raise_for_status()
 
         return response
