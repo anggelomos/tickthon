@@ -1,4 +1,4 @@
 [run]
-source = src/pytic
+source = src/tickthon
 omit =
     tests/*

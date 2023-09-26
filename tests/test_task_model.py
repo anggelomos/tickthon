@@ -1,6 +1,6 @@
 import attrs
-from pytic import Task, dict_to_task
-from pytic._task_utils import _get_focus_time, _get_task_date, _get_kanban_status
+from tickthon import Task, dict_to_task
+from tickthon._task_utils import _get_focus_time, _get_task_date, _get_kanban_status
 
 
 def test_dict_to_task(dict_task):

@@ -2,8 +2,8 @@ import json
 
 import pytest
 
-from pytic import Task
-from pytic import TicktickClient
+from tickthon import Task
+from tickthon import TicktickClient
 
 
 @pytest.fixture(scope="module")

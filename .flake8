@@ -1,5 +1,5 @@
 [flake8]
 max-line-length = 120
 exclude = tests/*,
-          src/pytic/__init__.py
+          src/tickthon/__init__.py
 max-complexity = 10

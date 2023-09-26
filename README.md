@@ -1,15 +1,15 @@
-# pytick
+# tickthon
 Yet another unofficial Ticktick API client, it is based on ticktick-py https://pypi.org/project/ticktick-py/
 
 ## Installation
 ```bash
-pip install pytick
+pip install tickthon
 ```
 
 ## Usage
 
 ```python
-from pytick import TickTickClient
+from tickthon import TicktickClient
 
 client = TicktickClient(username, password)
 client.get_active_tasks()
@@ -42,10 +42,10 @@ Task:
 - kanban_status: str, default: ""
 - recurrent_id: Optional[str], default: ""
 
-## Ticktick Ids environment variable
-If you want to use this package to its full potential, you need to set the environment variable TICKTICK_IDS, this
-variable should be a json string with the following keys:
-
+## Environment variables
+- TT_user: Ticktick username
+- TT_pass: Ticktick password
+- TICKTICK_IDS: This variable should be a json string with the following keys:
 
 for example:
 ```json

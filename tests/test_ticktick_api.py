@@ -1,7 +1,7 @@
 import pytest
 from requests import HTTPError
 
-from pytic._ticktick_api import TicktickAPI
+from tickthon._ticktick_api import TicktickAPI
 
 
 @pytest.fixture(scope="module")
