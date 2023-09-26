@@ -9,6 +9,19 @@ from .task_model import Task
 
 
 def _clean_habit_checkins(checkins: List[dict]) -> List[str]:
+    """Returns a list of formatted dates from successful habit checkins.
+
+        Args:
+            checkins (List[dict]): A list of checkin dictionaries with "checkinStamp" and "status".
+
+        Returns:
+            List[str]: A list of strings representing dates of successful checkins ('YYYY-MM-DD').
+                       Returns an empty list if no successful checkins are found.
+
+        Example:
+            >>> _clean_habit_checkins([{"checkinStamp": "20230925", "status": 2}])
+            ['2023-09-25']
+    """
     if not checkins:
         return []
 
@@ -91,13 +104,21 @@ def _get_focus_time(raw_task: dict) -> float:
     return focus_time
 
 
-def _get_task_date(timezone: str, start_date: str) -> str:
-    if not start_date:
+def _get_task_date(task_timezone: str, task_start_date: str) -> str:
+    """Returns the date of a task taking into account the timezone.
+
+    Args:
+        task_timezone: The timezone of the task.
+        task_start_date: The start date of the task.
+
+    Returns:
+        Task's date in the format YYYY-MM-DD, if the task has no start date, returns an empty string.
+    """
+    if not task_start_date:
         return ""
 
-    task_timezone = tz.gettz(timezone)
-
-    task_raw_date = parser.parse(start_date)
+    task_timezone = tz.gettz(task_timezone)
+    task_raw_date = parser.parse(task_start_date)
 
     localized_task_date = task_raw_date.astimezone(task_timezone)
     task_date = localized_task_date.strftime("%Y-%m-%d")

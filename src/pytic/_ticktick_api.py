@@ -51,7 +51,9 @@ class TicktickAPI:
         response = self.post(self.SIGNIN_URL, data=payload, token_required=False)
 
         if response.status_code != 200:
-            raise HTTPError("Failed to login using the API")
+            raise HTTPError("Failed to login using the API "
+                            f"Request status code: {response.status_code}, "
+                            f"Request message: {response.text}")
 
         return response.json()["token"]
 
@@ -107,6 +109,8 @@ class TicktickAPI:
         response = self._base_request(RequestTypes.GET, url, data, token_required)
 
         if response.status_code != 200:
-            raise HTTPError("Failed send get request using the API")
+            raise HTTPError(f"Failed send get request using the API. "
+                            f"Request status code: {response.status_code}, "
+                            f"Request message: {response.text}")
 
         return response
