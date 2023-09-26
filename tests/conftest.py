@@ -7,7 +7,7 @@ import pytest
 
 @pytest.fixture(scope="module")
 def ticktick_info():
-    return {"username": os.getenv("TT_user"), "password": os.getenv("TT_pass")}
+    return {"username": os.getenv("TT_USER"), "password": os.getenv("TT_PASS")}
 
 
 @pytest.fixture(scope="session")

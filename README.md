@@ -43,8 +43,8 @@ Task:
 - recurrent_id: Optional[str], default: ""
 
 ## Environment variables
-- TT_user: Ticktick username
-- TT_pass: Ticktick password
+- TT_USER: Ticktick username
+- TT_PASS: Ticktick password
 - TICKTICK_IDS: This variable should be a json string with the following keys:
 
 for example:
