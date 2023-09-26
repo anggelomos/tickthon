@@ -7,7 +7,7 @@ repository = "https://github.com/anggelomos/tickthon"
 
 [project]
 name = "tickthon"
-version = "0.0.3"
+version = "0.1.0"
 description = "Yet another unofficial Ticktick API client, it is based on ticktick-py"
 readme = "README.md"
 authors = [{name = "anggelomos", email = "anggelomos@outlook.com"}]
