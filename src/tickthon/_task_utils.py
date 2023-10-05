@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List
 from dateutil import parser, tz
 
-from ._config import get_ticktick_ids
+from ._config import get_ticktick_ids, check_ticktick_ids
 from .data.ticktick_id_keys import TicktickIdKeys as tik
 from .data.ticktick_task_parameters import TicktickTaskParameters as ttp
 from .task_model import Task
@@ -136,7 +136,7 @@ def _get_kanban_status(column_id: str) -> str:
         The kanban status of the task.
     """
     kanban_status = ""
-    if column_id and get_ticktick_ids() and get_ticktick_ids().get(tik.COLUMN_TAGS.value, False):
+    if column_id and check_ticktick_ids() and get_ticktick_ids().get(tik.COLUMN_TAGS.value, False):
         kanban_status = get_ticktick_ids()[tik.COLUMN_TAGS.value].get(column_id, "")
 
     return kanban_status

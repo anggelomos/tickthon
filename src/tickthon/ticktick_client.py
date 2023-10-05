@@ -2,7 +2,7 @@ import logging
 import datetime
 from typing import List, Optional
 
-from ._config import CHECKINS_START_DATE, get_ticktick_ids
+from ._config import CHECKINS_START_DATE, get_ticktick_ids, check_ticktick_ids
 from ._ticktick_api import TicktickAPI
 from .data.ticktick_payloads import TicktickPayloads
 from .data.ticktick_id_keys import TicktickIdKeys as tik
@@ -62,7 +62,7 @@ class TicktickClient:
         if not isinstance(raw_tasks, list):
             raw_tasks = [raw_tasks]
 
-        if get_ticktick_ids() and get_ticktick_ids().get(tik.VALID_LIST_IDS.value, False):
+        if check_ticktick_ids() and get_ticktick_ids().get(tik.VALID_LIST_IDS.value, False):
             valid_ticktick_lists += get_ticktick_ids()[tik.VALID_LIST_IDS.value].keys()
 
         for raw_task in raw_tasks:
@@ -230,8 +230,8 @@ class TicktickClient:
         """
         logging.info("Getting habits")
         habit_ids = {}
-        if get_ticktick_ids():
-            habit_ids = get_ticktick_ids().get(tik.HABIT_LIST.value, False)
+        if check_ticktick_ids():
+            habit_ids = get_ticktick_ids().get(tik.HABIT_LIST.value, {})
 
         if not habit_ids:
             logging.warning("No habits found in ticktick_ids")
