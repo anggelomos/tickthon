@@ -5,6 +5,9 @@ build-backend = "setuptools.build_meta"
 [project.urls]
 repository = "https://github.com/anggelomos/tickthon"
 
+[tool.setuptools.package-data]
+tickthon = ["py.typed"]
+
 [project]
 name = "tickthon"
 version = "0.1.0"
