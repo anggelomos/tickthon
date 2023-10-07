@@ -1,6 +1,6 @@
 import attrs
 from tickthon import Task, dict_to_task
-from tickthon._task_utils import _get_focus_time, _get_task_date, _get_kanban_status
+from tickthon._task_utils import _get_focus_time, _get_task_date
 
 
 def test_dict_to_task(dict_task):
@@ -13,7 +13,6 @@ def test_dict_to_task(dict_task):
                          project_id="5f30772022d478db3ad1a9c2",
                          timezone="America/Bogota",
                          due_date="2023-08-03",
-                         kanban_status="",
                          recurrent_id="o3k8772022d478db3ad1d94j"
                          )
 
@@ -47,15 +46,3 @@ def test_get_date():
     task_date = _get_task_date(raw_timezone, raw_task_date)
 
     assert task_date == "2023-08-03"
-
-
-def test_get_kanban_status():
-    column_id = "61c62f48824afc6c76352411"
-    kanban_status = _get_kanban_status(column_id)
-
-    assert kanban_status == "review"
-
-
-def test_get_empty_kanban_status():
-    column_id = _get_kanban_status("")
-    assert column_id == ""

@@ -2,8 +2,6 @@ from datetime import datetime
 from typing import List
 from dateutil import parser, tz
 
-from ._config import get_ticktick_ids, check_ticktick_ids
-from .data.ticktick_id_keys import TicktickIdKeys as tik
 from .data.ticktick_task_parameters import TicktickTaskParameters as ttp
 from .task_model import Task
 
@@ -79,7 +77,6 @@ def dict_to_task(raw_task: dict) -> Task:
                 project_id=raw_task[ttp.PROJECT_ID.value],
                 timezone=raw_task[ttp.TIMEZONE.value],
                 due_date=_get_task_date(raw_task[ttp.TIMEZONE.value], raw_task.get(ttp.START_DATE.value, None)),
-                kanban_status=_get_kanban_status(raw_task.get(ttp.COLUMN_ID.value, "")),
                 recurrent_id=raw_task.get(ttp.REPEAT_TASK_ID.value, ""),
                 )
 
@@ -124,19 +121,3 @@ def _get_task_date(raw_task_timezone: str, task_start_date: str) -> str:
     task_date = localized_task_date.strftime("%Y-%m-%d")
 
     return task_date
-
-
-def _get_kanban_status(column_id: str) -> str:
-    """Returns the kanban status of a task.
-
-    Args:
-        column_id: The id of the column.
-
-    Returns:
-        The kanban status of the task.
-    """
-    kanban_status = ""
-    if column_id and check_ticktick_ids() and get_ticktick_ids().get(tik.COLUMN_TAGS.value, False):
-        kanban_status = get_ticktick_ids()[tik.COLUMN_TAGS.value].get(column_id, "")
-
-    return kanban_status

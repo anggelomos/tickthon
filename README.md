@@ -39,7 +39,6 @@ Task:
 - project_id: str, default: ""
 - timezone: str, default: ""
 - due_date: str, default: ""
-- kanban_status: str, default: ""
 - recurrent_id: Optional[str], default: ""
 
 ## Environment variables
