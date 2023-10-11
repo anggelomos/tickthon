@@ -10,7 +10,7 @@ def test_dict_to_task(dict_task):
                          title="Automation tasks",
                          focus_time=0.1,
                          deleted=0,
-                         tags=["test", "unit"],
+                         tags=("test", "unit"),
                          project_id="5f30772022d478db3ad1a9c2",
                          timezone="America/Bogota",
                          due_date="2023-08-03",

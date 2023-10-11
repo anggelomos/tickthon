@@ -1,6 +1,6 @@
 import logging
 import datetime
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from . import ExpenseLog
 from ._config import CHECKINS_START_DATE, get_ticktick_ids, check_ticktick_ids
@@ -42,7 +42,7 @@ class TicktickClient:
         self.deleted_tasks: List[Task] = []
         self.abandoned_tasks: List[Task] = []
         self.ideas: List[Task] = []
-        self.expense_logs: List[ExpenseLog] = []
+        self.expense_logs: List[Tuple[Task, ExpenseLog]] = []
 
         self._get_all_tasks()
 
@@ -115,7 +115,7 @@ class TicktickClient:
             elif _is_task_an_expense_log(task):
                 expense_log = _parse_expense_log(task)
                 if expense_log is not None:
-                    self.expense_logs.append(expense_log)
+                    self.expense_logs.append((task, expense_log))
             elif _is_task_active(task):
                 self.active_tasks.append(task)
             else:
@@ -130,7 +130,7 @@ class TicktickClient:
         self._get_all_tasks()
         return self.ideas
 
-    def get_expense_logs(self) -> List[ExpenseLog]:
+    def get_expense_logs(self) -> List[Tuple[Task, ExpenseLog]]:
         """Gets all the tasks which title starts with "$" from Ticktick.
 
         Returns:

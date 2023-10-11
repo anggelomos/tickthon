@@ -76,7 +76,7 @@ def dict_to_task(raw_task: dict) -> Task:
                 title=raw_task[ttp.TITLE.value].strip(),
                 focus_time=_get_focus_time(raw_task),
                 deleted=raw_task.get(ttp.DELETED.value, 0),
-                tags=raw_task.get(ttp.TAGS.value, []),
+                tags=tuple(raw_task.get(ttp.TAGS.value, ())),
                 project_id=raw_task[ttp.PROJECT_ID.value],
                 timezone=raw_task[ttp.TIMEZONE.value],
                 due_date=_get_task_date(raw_task[ttp.TIMEZONE.value], raw_task.get(ttp.START_DATE.value, None)),
@@ -137,6 +137,11 @@ def _parse_expense_log(raw_expense_logs: Task) -> Optional[ExpenseLog]:
     expense_parse = re.search(r"\$([\d\.]+)\s+(.+)", raw_expense_logs.title)
     if not expense_parse:
         return None
-    return ExpenseLog(date=raw_expense_logs.due_date,
+
+    date = raw_expense_logs.due_date
+    if not date:
+        date = datetime.now(tz.gettz(raw_expense_logs.timezone)).strftime("%Y-%m-%d")
+
+    return ExpenseLog(date=date,
                       expense=float(expense_parse.group(1)),
                       product=expense_parse.group(2))

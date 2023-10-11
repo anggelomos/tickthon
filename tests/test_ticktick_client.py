@@ -1,4 +1,5 @@
 import json
+import time
 from typing import List
 
 import pytest
@@ -48,6 +49,7 @@ def test_get_ideas(ticktick_client):
 
     assert len(ideas) > 0
     assert isinstance(ideas, List) and all(isinstance(i, Task) for i in ideas)
+    time.sleep(3)
     ticktick_client.complete_task(ticktick_client.get_task(id_idea))
 
 
@@ -58,7 +60,9 @@ def test_get_expense_logs(ticktick_client):
     expense_logs = ticktick_client.get_expense_logs()
 
     assert len(expense_logs) > 0
-    assert isinstance(expense_logs, List) and all(isinstance(i, ExpenseLog) for i in expense_logs)
+    assert (isinstance(expense_logs, List) and
+            all(isinstance(i[0], Task) and isinstance(i[1], ExpenseLog) for i in expense_logs))
+    time.sleep(3)
     ticktick_client.complete_task(ticktick_client.get_task(id_expense_log))
 
 

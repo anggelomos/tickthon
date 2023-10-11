@@ -1,4 +1,4 @@
-from typing import List
+from typing import Tuple
 
 from attrs import define, field
 
@@ -25,7 +25,7 @@ class Task:
     status: int = 0
     focus_time: float = 0
     deleted: int = 0
-    tags: List[str] = []
+    tags: Tuple[str, ...] = ()
     project_id: str = field(default="", eq=str.lower)
     timezone: str = field(default="", eq=str.lower)
     due_date: str = field(default="", eq=str.lower)
