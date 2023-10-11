@@ -1,8 +1,9 @@
 import json
+from typing import List
 
 import pytest
 
-from tickthon import Task
+from tickthon import Task, ExpenseLog
 from tickthon import TicktickClient
 
 
@@ -40,25 +41,31 @@ def test_get_completed_tasks(ticktick_client):
 
 
 def test_get_ideas(ticktick_client):
-    id_idea = ticktick_client.create_task(Task(title="Idea: test idea"))
+    id_idea = ticktick_client.create_task(Task(title="Idea: test idea",
+                                               ticktick_id="test-id", ticktick_etag="test-etag"))
 
     ideas = ticktick_client.get_ideas()
 
     assert len(ideas) > 0
+    assert isinstance(ideas, List) and all(isinstance(i, Task) for i in ideas)
     ticktick_client.complete_task(ticktick_client.get_task(id_idea))
 
 
 def test_get_expense_logs(ticktick_client):
-    id_expense_log = ticktick_client.create_task(Task(title="$100 test expense log"))
+    id_expense_log = ticktick_client.create_task(Task(title="$100 test expense log",
+                                                      ticktick_id="test-id", ticktick_etag="test-etag"))
 
     expense_logs = ticktick_client.get_expense_logs()
 
     assert len(expense_logs) > 0
+    assert isinstance(expense_logs, List) and all(isinstance(i, ExpenseLog) for i in expense_logs)
     ticktick_client.complete_task(ticktick_client.get_task(id_expense_log))
 
 
 def test_complete_task(ticktick_client):
-    task_id = ticktick_client.create_task(Task(title="test-task"))
+    task_id = ticktick_client.create_task(Task(title="test-task",
+                                               ticktick_id="test-id", ticktick_etag="test-etag"))
+
     task_to_complete = ticktick_client.get_task(task_id)
 
     ticktick_client.complete_task(task_to_complete)

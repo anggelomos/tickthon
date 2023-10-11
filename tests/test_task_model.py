@@ -5,6 +5,7 @@ from tickthon._task_utils import _get_focus_time, _get_task_date
 
 def test_dict_to_task(dict_task):
     expected_task = Task(ticktick_id="60c8d7b1e9b80e0595353bc6",
+                         ticktick_etag="muu17zqq",
                          status=0,
                          title="Automation tasks",
                          focus_time=0.1,
@@ -13,7 +14,6 @@ def test_dict_to_task(dict_task):
                          project_id="5f30772022d478db3ad1a9c2",
                          timezone="America/Bogota",
                          due_date="2023-08-03",
-                         recurrent_id="o3k8772022d478db3ad1d94j"
                          )
 
     task = dict_to_task(dict_task)

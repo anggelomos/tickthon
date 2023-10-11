@@ -2,6 +2,7 @@ import logging
 import datetime
 from typing import List, Optional
 
+from . import ExpenseLog
 from ._config import CHECKINS_START_DATE, get_ticktick_ids, check_ticktick_ids
 from ._ticktick_api import TicktickAPI
 from .data.ticktick_payloads import TicktickPayloads
@@ -9,7 +10,8 @@ from .data.ticktick_id_keys import TicktickIdKeys as tik
 from .data.ticktick_task_parameters import TicktickTaskParameters as ttp
 from .data.ticktick_list_parameters import TicktickListParameters as tlp
 from .task_model import Task
-from ._task_utils import _is_task_an_idea, _is_task_an_expense_log, _is_task_active, _clean_habit_checkins, dict_to_task
+from ._task_utils import (_is_task_an_idea, _is_task_an_expense_log, _is_task_active, _clean_habit_checkins,
+                          dict_to_task, _parse_expense_log)
 
 current_date = datetime.datetime.utcnow()
 date_two_weeks_ago = (current_date - datetime.timedelta(days=14)).strftime("%Y-%m-%d")
@@ -40,7 +42,7 @@ class TicktickClient:
         self.deleted_tasks: List[Task] = []
         self.abandoned_tasks: List[Task] = []
         self.ideas: List[Task] = []
-        self.expense_logs: List[Task] = []
+        self.expense_logs: List[ExpenseLog] = []
 
         self._get_all_tasks()
 
@@ -98,12 +100,10 @@ class TicktickClient:
 
     def _get_all_tasks(self):
         """Gets all tasks from Ticktick."""
-        logging.info("Getting ticktick tasks")
         self._get_ticktick_data()
 
         raw_active_tasks = self.ticktick_data["syncTaskBean"]["update"]
         if raw_active_tasks == self._cached_raw_active_tasks:
-            logging.info("No new tasks found")
             return
 
         self._cached_raw_active_tasks = raw_active_tasks
@@ -113,7 +113,9 @@ class TicktickClient:
             if _is_task_an_idea(task):
                 self.ideas.append(task)
             elif _is_task_an_expense_log(task):
-                self.expense_logs.append(task)
+                expense_log = _parse_expense_log(task)
+                if expense_log is not None:
+                    self.expense_logs.append(expense_log)
             elif _is_task_active(task):
                 self.active_tasks.append(task)
             else:
@@ -128,7 +130,7 @@ class TicktickClient:
         self._get_all_tasks()
         return self.ideas
 
-    def get_expense_logs(self) -> List[Task]:
+    def get_expense_logs(self) -> List[ExpenseLog]:
         """Gets all the tasks which title starts with "$" from Ticktick.
 
         Returns:
@@ -166,8 +168,6 @@ class TicktickClient:
         Returns:
             Deleted tasks.
         """
-        logging.info("Getting deleted tasks")
-
         self._get_ticktick_data()
         raw_deleted_tasks = self.ticktick_client.get(self.DELETED_TASKS_URL).json()["tasks"]
         self.deleted_tasks = self._parse_ticktick_tasks(raw_deleted_tasks, self.project_lists)
@@ -180,8 +180,6 @@ class TicktickClient:
         Returns:
             Abandoned tasks.
         """
-        logging.info("Getting abandoned tasks")
-
         self._get_ticktick_data()
         raw_abandoned_tasks = self.ticktick_client.get(self.ABANDONED_TASKS_URL).json()
         self.abandoned_tasks = self._parse_ticktick_tasks(raw_abandoned_tasks, self.project_lists)
@@ -197,13 +195,11 @@ class TicktickClient:
         Returns:
             Task or dictionary with the task information.
         """
-        logging.info(f"Getting task {task_id}")
         task = self.ticktick_client.get(f"{self.TASK_URL}/{task_id}", token_required=True).json()
         return dict_to_task(task)
 
     def complete_task(self, task: Task):
         """Completes a task in Ticktick using the API."""
-        logging.info(f"Completing task {task}")
         payload = TicktickPayloads.complete_task(task.ticktick_id, task.project_id)
         self.ticktick_client.post(self.CRUD_TASK_URL, data=payload, token_required=True)
 
@@ -217,7 +213,6 @@ class TicktickClient:
         Returns:
             Ticktick id of the created task.
         """
-        logging.info(f"Creating task {task}")
         payload = TicktickPayloads.create_task(task, column_id)
         response = self.ticktick_client.post(self.CRUD_TASK_URL, payload, token_required=True).json()
         return list(response["id2etag"].keys())[0]

@@ -1,7 +1,9 @@
+import re
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 from dateutil import parser, tz
 
+from . import ExpenseLog
 from .data.ticktick_task_parameters import TicktickTaskParameters as ttp
 from .task_model import Task
 
@@ -69,6 +71,7 @@ def dict_to_task(raw_task: dict) -> Task:
         A Task object.
     """
     return Task(ticktick_id=raw_task[ttp.ID.value],
+                ticktick_etag=raw_task[ttp.ETAG.value],
                 status=raw_task[ttp.STATUS.value],
                 title=raw_task[ttp.TITLE.value].strip(),
                 focus_time=_get_focus_time(raw_task),
@@ -77,7 +80,6 @@ def dict_to_task(raw_task: dict) -> Task:
                 project_id=raw_task[ttp.PROJECT_ID.value],
                 timezone=raw_task[ttp.TIMEZONE.value],
                 due_date=_get_task_date(raw_task[ttp.TIMEZONE.value], raw_task.get(ttp.START_DATE.value, None)),
-                recurrent_id=raw_task.get(ttp.REPEAT_TASK_ID.value, ""),
                 )
 
 
@@ -121,3 +123,20 @@ def _get_task_date(raw_task_timezone: str, task_start_date: str) -> str:
     task_date = localized_task_date.strftime("%Y-%m-%d")
 
     return task_date
+
+
+def _parse_expense_log(raw_expense_logs: Task) -> Optional[ExpenseLog]:
+    """Parses raw expense logs from Ticktick into ExpenseLog objects.
+
+    Args:
+        raw_expense_logs: Raw expense logs from Ticktick.
+
+    Returns:
+        Parsed expense logs.
+    """
+    expense_parse = re.search(r"\$([\d\.]+)\s+(.+)", raw_expense_logs.title)
+    if not expense_parse:
+        return None
+    return ExpenseLog(date=raw_expense_logs.due_date,
+                      expense=float(expense_parse.group(1)),
+                      product=expense_parse.group(2))
