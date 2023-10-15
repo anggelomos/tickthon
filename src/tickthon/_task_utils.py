@@ -31,6 +31,13 @@ def _clean_habit_checkins(checkins: List[dict]) -> List[str]:
     return [parse_date(checkin["checkinStamp"]) for checkin in checkins if checkin["status"] == 2]
 
 
+def _is_task_a_weight_measurement(task: Task, weight_measurement_id: Optional[str]) -> bool:
+    """Checks if a task is a weight measurement."""
+    if weight_measurement_id is None:
+        return False
+    return task.project_id == weight_measurement_id
+
+
 def _is_task_an_idea(task: Task) -> bool:
     """Checks if a task is an idea."""
     return task.title.startswith("Idea:")
@@ -72,6 +79,7 @@ def dict_to_task(raw_task: dict) -> Task:
     """
     return Task(ticktick_id=raw_task[ttp.ID.value],
                 ticktick_etag=raw_task[ttp.ETAG.value],
+                created_date=_get_task_date(raw_task[ttp.TIMEZONE.value], raw_task.get(ttp.CREATED_TIME.value, None)),
                 status=raw_task[ttp.STATUS.value],
                 title=raw_task[ttp.TITLE.value].strip(),
                 focus_time=_get_focus_time(raw_task),

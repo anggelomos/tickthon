@@ -1,7 +1,7 @@
 [
 {
   "id": "90as8dfa09sd8f90asdf809",
-  "name": "test-project",
+  "name": "test-project-1",
   "isOwner": true,
   "color": "#F1C231",
   "inAll": true,
@@ -38,7 +38,7 @@
 },
 {
   "id": "90as8dfa0as23dfsdf809",
-  "name": "test-project",
+  "name": "test-project-2",
   "isOwner": true,
   "color": null,
   "inAll": true,
@@ -75,7 +75,7 @@
 },
 {
   "id": "90as8df23f2390asdf809",
-  "name": "test-project",
+  "name": "test-project-3",
   "isOwner": true,
   "color": "#4AA6EF",
   "inAll": true,
@@ -112,7 +112,7 @@
 },
 {
   "id": "90as823fw3sd8f90asdf809",
-  "name": "test-project",
+  "name": "test-project-4",
   "isOwner": true,
   "color": null,
   "inAll": true,
@@ -149,7 +149,7 @@
 },
 {
   "id": "90as8dfa23432fdsasdf809",
-  "name": "test-project",
+  "name": "test-project-5",
   "isOwner": true,
   "color": null,
   "inAll": true,
@@ -186,7 +186,7 @@
 },
 {
   "id": "90as8df324fds8f90asdf809",
-  "name": "test-project",
+  "name": "test-project-6",
   "isOwner": true,
   "color": null,
   "inAll": true,
@@ -223,7 +223,7 @@
 },
 {
   "id": "90as8d234sdf9sd8f90asdf809",
-  "name": "test-project",
+  "name": "test-project-7",
   "isOwner": true,
   "color": null,
   "inAll": true,

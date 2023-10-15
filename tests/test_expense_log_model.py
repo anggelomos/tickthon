@@ -13,7 +13,7 @@ from tickthon._task_utils import _parse_expense_log
 ])
 def test_parse_expense_log(expense_title, expected_amount):
     expected_expense_log = ExpenseLog(date="9999-09-09", expense=expected_amount, product="Test expense log")
-    raw_expense_log = Task(title=expense_title, due_date="9999-09-09",
+    raw_expense_log = Task(title=expense_title, due_date="9999-09-09", created_date="9999-09-09",
                            ticktick_id="test", ticktick_etag="test")
 
     expense_log = _parse_expense_log(raw_expense_log)
@@ -32,7 +32,7 @@ def test_parse_expense_log(expense_title, expected_amount):
     "$Test expense log",
 ])
 def test_parse_wrong_expense_log(expense_title):
-    raw_expense_log = Task(title=expense_title, due_date="9999-09-09",
+    raw_expense_log = Task(title=expense_title, due_date="9999-09-09", created_date="9999-09-09",
                            ticktick_id="test", ticktick_etag="test")
 
     expense_log = _parse_expense_log(raw_expense_log)

@@ -1,3 +1,5 @@
+import math
+
 import attrs
 from tickthon import Task, dict_to_task
 from tickthon._task_utils import _get_focus_time, _get_task_date
@@ -6,6 +8,7 @@ from tickthon._task_utils import _get_focus_time, _get_task_date
 def test_dict_to_task(dict_task):
     expected_task = Task(ticktick_id="60c8d7b1e9b80e0595353bc6",
                          ticktick_etag="muu17zqq",
+                         created_date="2021-06-15",
                          status=0,
                          title="Automation tasks",
                          focus_time=0.1,
@@ -28,7 +31,7 @@ def test_get_ticktick_focus_time():
 
     focus_time = _get_focus_time(rawt_focus_time)
 
-    assert focus_time == 0.1
+    assert math.isclose(focus_time, 0.1)
 
 
 def test_get_focus_time():
@@ -36,7 +39,7 @@ def test_get_focus_time():
 
     focus_time = _get_focus_time(raw_focus_time)
 
-    assert focus_time == 0.1
+    assert math.isclose(focus_time, 0.1)
 
 
 def test_get_date():

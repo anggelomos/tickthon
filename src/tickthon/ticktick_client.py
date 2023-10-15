@@ -1,17 +1,17 @@
 import logging
 import datetime
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Iterable
 
 from . import ExpenseLog
-from ._config import CHECKINS_START_DATE, get_ticktick_ids, check_ticktick_ids
+from ._config import get_ticktick_ids, check_ticktick_ids
 from ._ticktick_api import TicktickAPI
 from .data.ticktick_payloads import TicktickPayloads
 from .data.ticktick_id_keys import TicktickIdKeys as tik
 from .data.ticktick_task_parameters import TicktickTaskParameters as ttp
 from .data.ticktick_list_parameters import TicktickListParameters as tlp
 from .task_model import Task
-from ._task_utils import (_is_task_an_idea, _is_task_an_expense_log, _is_task_active, _clean_habit_checkins,
-                          dict_to_task, _parse_expense_log)
+from ._task_utils import (_is_task_an_idea, _is_task_an_expense_log, _is_task_active,
+                          dict_to_task, _parse_expense_log, _is_task_a_weight_measurement)
 
 current_date = datetime.datetime.utcnow()
 date_two_weeks_ago = (current_date - datetime.timedelta(days=14)).strftime("%Y-%m-%d")
@@ -42,6 +42,7 @@ class TicktickClient:
         self.deleted_tasks: List[Task] = []
         self.abandoned_tasks: List[Task] = []
         self.ideas: List[Task] = []
+        self.weight_measurements: List[Task] = []
         self.expense_logs: List[Tuple[Task, ExpenseLog]] = []
 
         self._get_all_tasks()
@@ -64,8 +65,8 @@ class TicktickClient:
         if not isinstance(raw_tasks, list):
             raw_tasks = [raw_tasks]
 
-        if check_ticktick_ids() and get_ticktick_ids().get(tik.VALID_LIST_IDS.value, False):
-            valid_ticktick_lists += get_ticktick_ids()[tik.VALID_LIST_IDS.value].keys()
+        if check_ticktick_ids() and get_ticktick_ids().get(tik.LIST_IDS.value, False):
+            valid_ticktick_lists += get_ticktick_ids()[tik.LIST_IDS.value].values()
 
         for raw_task in raw_tasks:
             if valid_ticktick_lists and raw_task[ttp.PROJECT_ID.value] not in valid_ticktick_lists:
@@ -75,8 +76,8 @@ class TicktickClient:
         return ticktick_tasks
 
     @staticmethod
-    def _get_project_lists(lists: List[dict]) -> Optional[dict]:
-        """Gets all project lists from Ticktick.
+    def _get_folder_lists(lists: List[dict]) -> Optional[dict]:
+        """Gets all folder lists from Ticktick.
 
         Args:
             lists: Raw lists from Ticktick.
@@ -84,19 +85,20 @@ class TicktickClient:
         Returns:
             Project lists with this format {list_id: list_name}.
         """
-        project_lists = {}
-        folder_ids = get_ticktick_ids().get(tik.FOLDER_IDS.value, {}) if get_ticktick_ids() else {}
-        project_folder_id = next((key for key, val in folder_ids.items() if val == tik.PROJECTS_FOLDER_KEY.value), None)
-        if project_folder_id:
-            project_lists = {project_list[tlp.ID]: project_list[tlp.NAME] for project_list in lists
-                             if project_list[tlp.GROUP_ID] == project_folder_id}
+        folder_lists = {}
+        folder_ids: Iterable[str] = []
+        if check_ticktick_ids() and get_ticktick_ids().get(tik.FOLDER_IDS.value, False):
+            folder_ids = get_ticktick_ids()[tik.FOLDER_IDS.value].values()
+        if folder_ids:
+            folder_lists = {project_list[tlp.NAME]: project_list[tlp.ID] for project_list in lists
+                            if project_list[tlp.GROUP_ID] in folder_ids}
 
-        return project_lists
+        return folder_lists
 
     def _get_ticktick_data(self):
         """Gets raw data from Ticktick."""
         self.ticktick_data = self.ticktick_client.get(self.GET_STATE_URL).json()
-        self.project_lists = list(self._get_project_lists(self.ticktick_data["projectProfiles"]).keys())
+        self.project_lists = list(self._get_folder_lists(self.ticktick_data["projectProfiles"]).values())
 
     def _get_all_tasks(self):
         """Gets all tasks from Ticktick."""
@@ -109,8 +111,14 @@ class TicktickClient:
         self._cached_raw_active_tasks = raw_active_tasks
         self.all_active_tasks = self._parse_ticktick_tasks(raw_active_tasks, self.project_lists)
 
+        weight_measurements_id = None
+        if get_ticktick_ids() is not None:
+            weight_measurements_id = get_ticktick_ids()[tik.LIST_IDS.value].get("weight_measurements")
+
         for task in self.all_active_tasks:
-            if _is_task_an_idea(task):
+            if _is_task_a_weight_measurement(task, weight_measurements_id):
+                self.weight_measurements.append(task)
+            elif _is_task_an_idea(task):
                 self.ideas.append(task)
             elif _is_task_an_expense_log(task):
                 expense_log = _parse_expense_log(task)
@@ -216,26 +224,3 @@ class TicktickClient:
         payload = TicktickPayloads.create_task(task, column_id)
         response = self.ticktick_client.post(self.CRUD_TASK_URL, payload, token_required=True).json()
         return list(response["id2etag"].keys())[0]
-
-    def get_habits(self) -> Optional[dict]:
-        """Gets all habits from Ticktick.
-
-        Returns:
-            Habits with this format {habit_name: ["yyyy-mm-dd", ...]}.
-        """
-        logging.info("Getting habits")
-        habit_ids = {}
-        if check_ticktick_ids():
-            habit_ids = get_ticktick_ids().get(tik.HABIT_LIST.value, {})
-
-        if not habit_ids:
-            logging.warning("No habits found in ticktick_ids")
-            return habit_ids
-
-        payload = TicktickPayloads.get_habits_checkins(habit_ids, CHECKINS_START_DATE)
-        habit_checkins_raw = self.ticktick_client.post(self.HABIT_CHECKINS_URL,
-                                                       payload,
-                                                       token_required=True).json()["checkins"]
-        habit_checkins = {habit_id: _clean_habit_checkins(checkins) for habit_id, checkins
-                          in habit_checkins_raw.items()}
-        return {habit_ids[habit_id]: checkins for habit_id, checkins in habit_checkins.items() if checkins}

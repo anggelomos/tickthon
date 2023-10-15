@@ -46,14 +46,22 @@ Task:
 ## Environment variables
 - TT_USER: Ticktick username
 - TT_PASS: Ticktick password
-- TICKTICK_IDS: This variable should be a json string with the following keys:
+- TICKTICK_IDS: This environment variable is a JSON string that specifies the TickTick lists and folders from which 
+  tasks will be fetched, if you don't set this environment variable all tasks will be fetched. It follows this structure:
 
 for example:
 ```json
 {
-  "project_id": "project_name",
-  "project_id2": "project_name2",
-  "project_id3": "project_name3"
+  "FOLDER_IDS": {
+    "folder_name-1": "folder_id",
+    "folder_name-2": "folder_id",
+    ...
+  },
+  "LIST_IDS": {
+    "list_name-1": "list_id",
+    "list_name-2": "list_id",
+    ...
+  }
 }
 ```
 *Note*: Remember that it is an optional step, if you don't set this variable the package will still work.

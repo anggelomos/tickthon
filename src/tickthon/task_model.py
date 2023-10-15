@@ -12,6 +12,7 @@ class Task:
         status: The status of the task. 0: default/open, 2: done, -1: abandoned.
         ticktick_id: The ID of the task. For example: 6f8a2b3c4d5e1f09a7b6c8d9e0f2
         ticktick_etag: The unique identifier for each task. For example: 4b7n9t2q
+        created_date: The date when the task was created in format YYYY-MM-DD.
         focus_time: The focus time of the task.
         deleted: The status of the task. 0: not deleted, 1: deleted.
         tags: The tags of the task as a list of strings.
@@ -22,6 +23,7 @@ class Task:
     title: str
     ticktick_id: str = field(eq=str.lower)
     ticktick_etag: str = field(eq=str.lower)
+    created_date: str
     status: int = 0
     focus_time: float = 0
     deleted: int = 0
