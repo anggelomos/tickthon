@@ -1,5 +1,6 @@
 import json
 import time
+from datetime import datetime
 from typing import List
 
 import pytest
@@ -77,6 +78,13 @@ def test_complete_task(ticktick_client):
     completed_task = ticktick_client.get_task(task_to_complete.ticktick_id)
     assert completed_task.status == 2
 
+
+def test_get_overall_focus_time(ticktick_client):
+    date = datetime.now().strftime("%Y-%m-%d")
+    focus_time = ticktick_client.get_overall_focus_time(date)
+
+    assert isinstance(focus_time, float)
+    assert focus_time >= 0
 
 # TODO: Create a test for get_deleted_tasks
 # TODO: Create a test for get_abandoned_tasks

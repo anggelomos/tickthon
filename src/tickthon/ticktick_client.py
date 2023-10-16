@@ -30,9 +30,10 @@ class TicktickClient:
     ABANDONED_TASKS_URL = BASE_URL + f"/project/all/closed?from={date_two_weeks_ago}%2005:00:00&to={date_tomorrow}" \
                                      f"%2004:59:00&status=Abandoned&limit=500"
     DELETED_TASKS_URL = BASE_URL + "/project/all/trash/pagination?start=0&limit=500"
+    GENERAL_FOCUS_TIME_URL = BASE_URL + "/pomodoros/statistics/heatmap"
 
     def __init__(self, username: str, password: str):
-        self.ticktick_client = TicktickAPI(username, password)
+        self.ticktick_api = TicktickAPI(username, password)
         self.ticktick_data: dict = {}
         self.project_lists: List[str] = []
         self._cached_raw_active_tasks: List[dict] = []
@@ -97,7 +98,7 @@ class TicktickClient:
 
     def _get_ticktick_data(self):
         """Gets raw data from Ticktick."""
-        self.ticktick_data = self.ticktick_client.get(self.GET_STATE_URL).json()
+        self.ticktick_data = self.ticktick_api.get(self.GET_STATE_URL).json()
         self.project_lists = list(self._get_folder_lists(self.ticktick_data["projectProfiles"]).values())
 
     def _get_all_tasks(self):
@@ -165,7 +166,7 @@ class TicktickClient:
         logging.info("Getting completed tasks")
 
         self._get_ticktick_data()
-        raw_completed_tasks = self.ticktick_client.get(self.COMPLETED_TASKS_URL).json()
+        raw_completed_tasks = self.ticktick_api.get(self.COMPLETED_TASKS_URL).json()
         self.completed_tasks = self._parse_ticktick_tasks(raw_completed_tasks, self.project_lists)
 
         return self.completed_tasks
@@ -177,7 +178,7 @@ class TicktickClient:
             Deleted tasks.
         """
         self._get_ticktick_data()
-        raw_deleted_tasks = self.ticktick_client.get(self.DELETED_TASKS_URL).json()["tasks"]
+        raw_deleted_tasks = self.ticktick_api.get(self.DELETED_TASKS_URL).json()["tasks"]
         self.deleted_tasks = self._parse_ticktick_tasks(raw_deleted_tasks, self.project_lists)
 
         return self.deleted_tasks
@@ -189,7 +190,7 @@ class TicktickClient:
             Abandoned tasks.
         """
         self._get_ticktick_data()
-        raw_abandoned_tasks = self.ticktick_client.get(self.ABANDONED_TASKS_URL).json()
+        raw_abandoned_tasks = self.ticktick_api.get(self.ABANDONED_TASKS_URL).json()
         self.abandoned_tasks = self._parse_ticktick_tasks(raw_abandoned_tasks, self.project_lists)
 
         return self.abandoned_tasks
@@ -203,13 +204,13 @@ class TicktickClient:
         Returns:
             Task or dictionary with the task information.
         """
-        task = self.ticktick_client.get(f"{self.TASK_URL}/{task_id}", token_required=True).json()
+        task = self.ticktick_api.get(f"{self.TASK_URL}/{task_id}", token_required=True).json()
         return dict_to_task(task)
 
     def complete_task(self, task: Task):
         """Completes a task in Ticktick using the API."""
         payload = TicktickPayloads.complete_task(task.ticktick_id, task.project_id)
-        self.ticktick_client.post(self.CRUD_TASK_URL, data=payload, token_required=True)
+        self.ticktick_api.post(self.CRUD_TASK_URL, data=payload, token_required=True)
 
     def create_task(self, task: Task, column_id: Optional[str] = None) -> str:
         """Creates a task in Ticktick using the API.
@@ -222,5 +223,19 @@ class TicktickClient:
             Ticktick id of the created task.
         """
         payload = TicktickPayloads.create_task(task, column_id)
-        response = self.ticktick_client.post(self.CRUD_TASK_URL, payload, token_required=True).json()
+        response = self.ticktick_api.post(self.CRUD_TASK_URL, payload, token_required=True).json()
         return list(response["id2etag"].keys())[0]
+
+    def get_overall_focus_time(self, date: str) -> float:
+        """Gets the overall focus time of a day from Ticktick.
+
+        Args:
+            date: Date to get the focus time from in the format YYYY-MM-DD.
+
+        Returns:
+            General focus time.
+        """
+        clean_date = date.replace("-", "")
+        raw_time = self.ticktick_api.get(f"{self.GENERAL_FOCUS_TIME_URL}/{clean_date}/{clean_date}").json()
+
+        return round(raw_time[0]["duration"] / 60, 2)
