@@ -38,11 +38,6 @@ def _is_task_a_weight_measurement(task: Task, weight_measurement_id: Optional[st
     return task.project_id == weight_measurement_id
 
 
-def _is_task_an_idea(task: Task) -> bool:
-    """Checks if a task is an idea."""
-    return task.title.startswith("Idea:")
-
-
 def _is_task_an_expense_log(task: Task) -> bool:
     """Checks if a task is an expense log."""
     return task.title.startswith("$")

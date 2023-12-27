@@ -42,18 +42,6 @@ def test_get_completed_tasks(ticktick_client):
     assert len(completed_tasks) > 0
 
 
-def test_get_ideas(ticktick_client):
-    id_idea = ticktick_client.create_task(Task(title="Idea: test idea", created_date="2099-09-09",
-                                               ticktick_id="test-id", ticktick_etag="test-etag"))
-
-    ideas = ticktick_client.get_ideas()
-
-    assert len(ideas) > 0
-    assert isinstance(ideas, List) and all(isinstance(i, Task) for i in ideas)
-    time.sleep(3)
-    ticktick_client.complete_task(ticktick_client.get_task(id_idea))
-
-
 def test_get_expense_logs(ticktick_client):
     id_expense_log = ticktick_client.create_task(Task(title="$100 test expense log", created_date="2099-09-09",
                                                       ticktick_id="test-id", ticktick_etag="test-etag"))
