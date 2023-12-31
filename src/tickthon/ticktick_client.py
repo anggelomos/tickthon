@@ -1,6 +1,8 @@
 import logging
-import datetime
+from datetime import datetime, timedelta
 from typing import List, Optional, Tuple, Iterable
+
+from dateutil.tz import tz
 
 from . import ExpenseLog
 from ._config import get_ticktick_ids, check_ticktick_ids
@@ -10,12 +12,12 @@ from .data.ticktick_id_keys import TicktickIdKeys as tik
 from .data.ticktick_task_parameters import TicktickTaskParameters as ttp
 from .data.ticktick_list_parameters import TicktickListParameters as tlp
 from .task_model import Task
-from ._task_utils import (_is_task_an_idea, _is_task_an_expense_log, _is_task_active,
-                          dict_to_task, _parse_expense_log, _is_task_a_weight_measurement)
+from ._task_utils import (_is_task_an_expense_log, _is_task_active,
+                          dict_to_task, _parse_expense_log, _is_task_a_weight_measurement, _is_task_day_log)
 
-current_date = datetime.datetime.utcnow()
-date_two_weeks_ago = (current_date - datetime.timedelta(days=14)).strftime("%Y-%m-%d")
-date_tomorrow = (current_date + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+current_date = datetime.utcnow()
+date_two_weeks_ago = (current_date - timedelta(days=14)).strftime("%Y-%m-%d")
+date_tomorrow = (current_date + timedelta(days=1)).strftime("%Y-%m-%d")
 
 
 class TicktickClient:
@@ -42,9 +44,11 @@ class TicktickClient:
         self.completed_tasks: List[Task] = []
         self.deleted_tasks: List[Task] = []
         self.abandoned_tasks: List[Task] = []
-        self.ideas: List[Task] = []
         self.weight_measurements: List[Task] = []
         self.expense_logs: List[Tuple[Task, ExpenseLog]] = []
+        self.all_day_logs: List[Task] = []
+        self.day_logs: List[Task] = []
+        self.day_highlights: List[Task] = []
 
         self._get_all_tasks()
 
@@ -112,32 +116,19 @@ class TicktickClient:
         self._cached_raw_active_tasks = raw_active_tasks
         self.all_active_tasks = self._parse_ticktick_tasks(raw_active_tasks, self.project_lists)
 
-        weight_measurements_id = None
-        if get_ticktick_ids() is not None:
-            weight_measurements_id = get_ticktick_ids()[tik.LIST_IDS.value].get("weight_measurements")
-
         for task in self.all_active_tasks:
-            if _is_task_a_weight_measurement(task, weight_measurements_id):
+            if _is_task_a_weight_measurement(task):
                 self.weight_measurements.append(task)
-            elif _is_task_an_idea(task):
-                self.ideas.append(task)
             elif _is_task_an_expense_log(task):
                 expense_log = _parse_expense_log(task)
                 if expense_log is not None:
                     self.expense_logs.append((task, expense_log))
+            elif _is_task_day_log(task):
+                self.all_day_logs.append(task)
             elif _is_task_active(task):
                 self.active_tasks.append(task)
             else:
                 logging.warning(f"Task {task} does not have a valid status")
-
-    def get_ideas(self) -> List[Task]:
-        """Gets all the tasks which title starts with "Idea:" from Ticktick.
-
-        Returns:
-            Ideas.
-        """
-        self._get_all_tasks()
-        return self.ideas
 
     def get_expense_logs(self) -> List[Tuple[Task, ExpenseLog]]:
         """Gets all the tasks which title starts with "$" from Ticktick.
@@ -147,6 +138,34 @@ class TicktickClient:
         """
         self._get_all_tasks()
         return self.expense_logs
+
+    def _process_daily_logs(self):
+        """Processes the daily logs."""
+        self._get_all_tasks()
+
+        for task in self.all_day_logs:
+            if datetime.fromisoformat(task.created_date) < (datetime.now(tz.gettz(task.timezone)) - timedelta(days=7)):
+                self.complete_task(task)
+                continue
+
+            if "highlight" in task.tags:
+                self.day_highlights.append(task)
+            else:
+                self.day_logs.append(task)
+
+    def get_day_logs(self) -> List[Task]:
+        """Gets all the day logs from Ticktick."""
+        if not self.day_logs:
+            self._process_daily_logs()
+
+        return self.day_logs
+
+    def get_day_highlights(self) -> List[Task]:
+        """Gets all the day highlights from Ticktick."""
+        if not self.day_highlights:
+            self._process_daily_logs()
+
+        return self.day_highlights
 
     def get_active_tasks(self) -> List[Task]:
         """Gets all active tasks from Ticktick.

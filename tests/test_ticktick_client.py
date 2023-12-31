@@ -7,6 +7,8 @@ import pytest
 
 from tickthon import Task, ExpenseLog
 from tickthon import TicktickClient
+from tickthon._config import get_ticktick_ids
+from tickthon.data.ticktick_id_keys import TicktickIdKeys as tik, TicktickFolderKeys as tfK
 
 
 @pytest.fixture(scope="module")
@@ -42,18 +44,6 @@ def test_get_completed_tasks(ticktick_client):
     assert len(completed_tasks) > 0
 
 
-def test_get_ideas(ticktick_client):
-    id_idea = ticktick_client.create_task(Task(title="Idea: test idea", created_date="2099-09-09",
-                                               ticktick_id="test-id", ticktick_etag="test-etag"))
-
-    ideas = ticktick_client.get_ideas()
-
-    assert len(ideas) > 0
-    assert isinstance(ideas, List) and all(isinstance(i, Task) for i in ideas)
-    time.sleep(3)
-    ticktick_client.complete_task(ticktick_client.get_task(id_idea))
-
-
 def test_get_expense_logs(ticktick_client):
     id_expense_log = ticktick_client.create_task(Task(title="$100 test expense log", created_date="2099-09-09",
                                                       ticktick_id="test-id", ticktick_etag="test-etag"))
@@ -65,6 +55,34 @@ def test_get_expense_logs(ticktick_client):
             all(isinstance(i[0], Task) and isinstance(i[1], ExpenseLog) for i in expense_logs))
     time.sleep(3)
     ticktick_client.complete_task(ticktick_client.get_task(id_expense_log))
+
+
+def test_get_day_logs(ticktick_client):
+    day_logs_project_id = get_ticktick_ids()[tik.LIST_IDS.value].get(tfK.DAY_LOGS.value)
+    id_day_log = ticktick_client.create_task(Task(title="Test daily log", created_date="2099-09-09",
+                                                  ticktick_id="test-id", ticktick_etag="test-etag",
+                                                  project_id=day_logs_project_id))
+
+    day_logs = ticktick_client.get_day_logs()
+
+    assert len(day_logs) > 0
+    assert (isinstance(day_logs, List))
+    time.sleep(3)
+    ticktick_client.complete_task(ticktick_client.get_task(id_day_log))
+
+
+def test_get_day_highlights(ticktick_client):
+    day_logs_project_id = get_ticktick_ids()[tik.LIST_IDS.value].get(tfK.DAY_LOGS.value)
+    id_day_log = ticktick_client.create_task(Task(title="Test daily highlight log", created_date="2099-09-09",
+                                                  ticktick_id="test-id", ticktick_etag="test-etag", tags=("highlight",),
+                                                  project_id=day_logs_project_id))
+
+    day_highlight_logs = ticktick_client.get_day_highlights()
+
+    assert len(day_highlight_logs) > 0
+    assert (isinstance(day_highlight_logs, List))
+    time.sleep(3)
+    ticktick_client.complete_task(ticktick_client.get_task(id_day_log))
 
 
 def test_complete_task(ticktick_client):

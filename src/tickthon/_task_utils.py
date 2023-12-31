@@ -4,7 +4,9 @@ from typing import List, Optional
 from dateutil import parser, tz
 
 from . import ExpenseLog
+from ._config import get_ticktick_ids
 from .data.ticktick_task_parameters import TicktickTaskParameters as ttp
+from .data.ticktick_id_keys import TicktickIdKeys as tik, TicktickFolderKeys as tfK
 from .task_model import Task
 
 
@@ -13,6 +15,7 @@ def _clean_habit_checkins(checkins: List[dict]) -> List[str]:
 
         Args:
             checkins (List[dict]): A list of checkin dictionaries with "checkinStamp" and "status".
+
 
         Returns:
             List[str]: A list of strings representing dates of successful checkins ('YYYY-MM-DD').
@@ -31,21 +34,35 @@ def _clean_habit_checkins(checkins: List[dict]) -> List[str]:
     return [parse_date(checkin["checkinStamp"]) for checkin in checkins if checkin["status"] == 2]
 
 
-def _is_task_a_weight_measurement(task: Task, weight_measurement_id: Optional[str]) -> bool:
+def _is_task_a_weight_measurement(task: Task) -> bool:
     """Checks if a task is a weight measurement."""
-    if weight_measurement_id is None:
+    weight_measurements_list_id = None
+    ticktick_ids = get_ticktick_ids()
+    if ticktick_ids is not None:
+        weight_measurements_list_id = get_ticktick_ids()[tik.LIST_IDS.value].get(tfK.WEIGHT_MEASUREMENTS.value)
+
+    if weight_measurements_list_id is None:
         return False
-    return task.project_id == weight_measurement_id
 
-
-def _is_task_an_idea(task: Task) -> bool:
-    """Checks if a task is an idea."""
-    return task.title.startswith("Idea:")
+    return task.project_id == weight_measurements_list_id
 
 
 def _is_task_an_expense_log(task: Task) -> bool:
     """Checks if a task is an expense log."""
     return task.title.startswith("$")
+
+
+def _is_task_day_log(task: Task) -> bool:
+    """Checks if a task is a day log."""
+    day_logs_list_id = None
+    ticktick_ids = get_ticktick_ids()
+    if ticktick_ids is not None:
+        day_logs_list_id = get_ticktick_ids()[tik.LIST_IDS.value].get(tfK.DAY_LOGS.value)
+
+    if day_logs_list_id is None:
+        return False
+
+    return task.project_id == day_logs_list_id
 
 
 def _is_task_active(task: Task) -> bool:
@@ -111,24 +128,24 @@ def _get_focus_time(raw_task: dict) -> float:
     return focus_time
 
 
-def _get_task_date(raw_task_timezone: str, task_start_date: str) -> str:
+def _get_task_date(raw_task_timezone: str, task_date: str) -> str:
     """Returns the date of a task taking into account the timezone.
 
     Args:
         raw_task_timezone: The timezone of the task.
-        task_start_date: The start date of the task.
+        task_date: The start date of the task.
 
     Returns:
-        Task's date in the format YYYY-MM-DD, if the task has no start date, returns an empty string.
+        Task's date in iso format YYYY-MM-DDTHH:MM:SS+0000., if the task has no start date, returns an empty string.
     """
-    if not task_start_date:
+    if not task_date:
         return ""
 
     task_timezone = tz.gettz(raw_task_timezone)
-    task_raw_date = parser.parse(task_start_date)
+    task_raw_date = parser.parse(task_date)
 
     localized_task_date = task_raw_date.astimezone(task_timezone)
-    task_date = localized_task_date.strftime("%Y-%m-%d")
+    task_date = localized_task_date.isoformat()
 
     return task_date
 
