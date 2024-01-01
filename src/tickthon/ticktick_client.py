@@ -144,28 +144,16 @@ class TicktickClient:
         self._get_all_tasks()
 
         for task in self.all_day_logs:
-            if datetime.fromisoformat(task.created_date) < (datetime.now(tz.gettz(task.timezone)) - timedelta(days=7)):
+            if datetime.fromisoformat(task.created_date) < (datetime.now(tz.gettz(task.timezone)) - timedelta(days=3)):
                 self.complete_task(task)
                 continue
 
-            if "highlight" in task.tags:
-                self.day_highlights.append(task)
-            else:
-                self.day_logs.append(task)
+            self.day_logs.append(task)
 
     def get_day_logs(self) -> List[Task]:
         """Gets all the day logs from Ticktick."""
-        if not self.day_logs:
-            self._process_daily_logs()
-
+        self._process_daily_logs()
         return self.day_logs
-
-    def get_day_highlights(self) -> List[Task]:
-        """Gets all the day highlights from Ticktick."""
-        if not self.day_highlights:
-            self._process_daily_logs()
-
-        return self.day_highlights
 
     def get_active_tasks(self) -> List[Task]:
         """Gets all active tasks from Ticktick.
