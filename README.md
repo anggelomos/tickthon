@@ -22,7 +22,6 @@ client.get_active_tasks()
 - get_abandoned_tasks()
 - get_expense_logs()
 - get_day_logs()
-- get_day_highlights()
 - get_task(task_id)
 - get_overall_focus_time(date)
 - get_habits()
@@ -66,4 +65,3 @@ for example:
   }
 }
 ```
-*Note*: Remember that it is an optional step, if you don't set this variable the package will still work.
