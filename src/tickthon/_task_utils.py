@@ -5,6 +5,7 @@ from dateutil import parser, tz
 
 from . import ExpenseLog
 from ._config import get_ticktick_ids
+from .data.past_tense_verbs import PAST_TENSE_VERBS
 from .data.ticktick_task_parameters import TicktickTaskParameters as ttp
 from .data.ticktick_id_keys import TicktickIdKeys as tik, TicktickFolderKeys as tfK
 from .task_model import Task
@@ -54,13 +55,21 @@ def _is_task_an_expense_log(task: Task) -> bool:
 
 def _is_task_day_log(task: Task) -> bool:
     """Checks if a task is a day log."""
-    day_logs_list_id = None
+    day_logs_list_id = ""
     ticktick_ids = get_ticktick_ids()
     if ticktick_ids is not None:
-        day_logs_list_id = get_ticktick_ids()[tik.LIST_IDS.value].get(tfK.DAY_LOGS.value)
+        day_logs_list_id = get_ticktick_ids()[tik.LIST_IDS.value].get(tfK.DAY_LOGS.value, "")
 
-    if day_logs_list_id is None:
-        return False
+    if task.project_id == day_logs_list_id:
+        return True
+
+    if task.project_id == get_ticktick_ids()[tik.LIST_IDS.value].get(tfK.INBOX_TASKS.value):
+        if task.title.lower().startswith(("i ", "i'm ", "i'll ", "im ", "ill ")):
+            return True
+
+        title_first_word = task.title.split()[0].lower()
+        if title_first_word.endswith("ed") or title_first_word.endswith("ing") or title_first_word in PAST_TENSE_VERBS:
+            return True
 
     return task.project_id == day_logs_list_id
 

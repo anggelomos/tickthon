@@ -8,12 +8,12 @@ from . import ExpenseLog
 from ._config import get_ticktick_ids, check_ticktick_ids
 from ._ticktick_api import TicktickAPI
 from .data.ticktick_payloads import TicktickPayloads
-from .data.ticktick_id_keys import TicktickIdKeys as tik
+from .data.ticktick_id_keys import TicktickIdKeys as tik, TicktickFolderKeys as tfK
 from .data.ticktick_task_parameters import TicktickTaskParameters as ttp
 from .data.ticktick_list_parameters import TicktickListParameters as tlp
 from .task_model import Task
 from ._task_utils import (_is_task_an_expense_log, _is_task_active,
-                          dict_to_task, _parse_expense_log, _is_task_a_weight_measurement, _is_task_day_log)
+                          dict_to_task, _parse_expense_log, _is_task_day_log)
 
 current_date = datetime.utcnow()
 date_two_weeks_ago = (current_date - timedelta(days=14)).strftime("%Y-%m-%d")
@@ -25,6 +25,7 @@ class TicktickClient:
     BASE_URL = "/api/v2"
     GET_STATE_URL = BASE_URL + "/batch/check/0"
     CRUD_TASK_URL = BASE_URL + "/batch/task"
+    MOVE_TASK_URL = BASE_URL + "/batch/taskProject"
     TASK_URL = BASE_URL + "/task"
     HABIT_CHECKINS_URL = BASE_URL + "/habitCheckins/query"
     COMPLETED_TASKS_URL = BASE_URL + f"/project/all/closed?from={date_two_weeks_ago}%2005:00:00&to={date_tomorrow}" \
@@ -48,7 +49,6 @@ class TicktickClient:
         self.expense_logs: List[Tuple[Task, ExpenseLog]] = []
         self.all_day_logs: List[Task] = []
         self.day_logs: List[Task] = []
-        self.day_highlights: List[Task] = []
 
         self._get_all_tasks()
 
@@ -117,14 +117,15 @@ class TicktickClient:
         self.all_active_tasks = self._parse_ticktick_tasks(raw_active_tasks, self.project_lists)
 
         for task in self.all_active_tasks:
-            if _is_task_a_weight_measurement(task):
-                self.weight_measurements.append(task)
+            # TODO: Add weight measurements once they are restored
+            # if _is_task_a_weight_measurement(task):
+            #     self.weight_measurements.append(task)
+            if _is_task_day_log(task):
+                self.all_day_logs.append(task)
             elif _is_task_an_expense_log(task):
                 expense_log = _parse_expense_log(task)
                 if expense_log is not None:
                     self.expense_logs.append((task, expense_log))
-            elif _is_task_day_log(task):
-                self.all_day_logs.append(task)
             elif _is_task_active(task):
                 self.active_tasks.append(task)
             else:
@@ -139,14 +140,42 @@ class TicktickClient:
         self._get_all_tasks()
         return self.expense_logs
 
+    def move_task_to_project(self, task: Task, project_id: str):
+        payload = TicktickPayloads.move_task_to_project(task, project_id)
+        self.ticktick_api.post(self.MOVE_TASK_URL, data=payload, token_required=True)
+
+    def replace_task_tags(self, task: Task, tags: tuple[str, ...]):
+        payload = TicktickPayloads.update_task_tags(task, tags)
+        self.ticktick_api.post(self.CRUD_TASK_URL, data=payload, token_required=True)
+
+    def _add_day_log_tags(self, task: Task, task_created_date: datetime, current_date_localized: datetime):
+        if task_created_date >= current_date_localized:
+            self.replace_task_tags(task, task.tags + ("today-log",))
+        elif task_created_date >= (current_date_localized - timedelta(days=1)):
+            self.replace_task_tags(task, task.tags + ("yesterday-log",))
+        else:
+            if len(task.tags) > 0:
+                task_tags = ("highlight",) if "highlight" in task.tags else tuple()
+                self.replace_task_tags(task, task_tags)
+
     def _process_daily_logs(self):
         """Processes the daily logs."""
         self._get_all_tasks()
 
         for task in self.all_day_logs:
-            if datetime.fromisoformat(task.created_date) < (datetime.now(tz.gettz(task.timezone)) - timedelta(days=3)):
+            if task.project_id == get_ticktick_ids()[tik.LIST_IDS.value][tfK.INBOX_TASKS.value]:
+                self.replace_task_tags(task, tuple())
+                self.move_task_to_project(task, get_ticktick_ids()[tik.LIST_IDS.value][tfK.DAY_LOGS.value])
+                continue
+
+            task_created_date = datetime.fromisoformat(task.created_date)
+            current_date_localized = datetime.now(tz.gettz(task.timezone)).replace(hour=0, minute=0, second=0,
+                                                                                   microsecond=0)
+            if task_created_date < (current_date_localized - timedelta(days=3)):
                 self.complete_task(task)
                 continue
+
+            self._add_day_log_tags(task, task_created_date, current_date_localized)
 
             self.day_logs.append(task)
 
@@ -216,7 +245,7 @@ class TicktickClient:
 
     def complete_task(self, task: Task):
         """Completes a task in Ticktick using the API."""
-        payload = TicktickPayloads.complete_task(task.ticktick_id, task.project_id)
+        payload = TicktickPayloads.complete_task(task)
         self.ticktick_api.post(self.CRUD_TASK_URL, data=payload, token_required=True)
 
     def create_task(self, task: Task, column_id: Optional[str] = None) -> str:

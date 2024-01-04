@@ -52,7 +52,7 @@ class TicktickAPI:
 
         return response.json()["token"]
 
-    def _base_request(self, request_type: RequestTypes, url: str, data: Optional[dict] = None,
+    def _base_request(self, request_type: RequestTypes, url: str, data: dict | list | None = None,
                       token_required: bool = True) -> Response:
         """Sends a request to the Ticktick API.
 
@@ -73,7 +73,7 @@ class TicktickAPI:
 
         return self.session.request(request_type.value, f"{self.HOST}{url}", json=data)
 
-    def post(self, url: str, data: Optional[dict] = None, token_required: bool = True) -> Response:
+    def post(self, url: str, data: dict | list | None = None, token_required: bool = True) -> Response:
         """Sends a POST request to the Ticktick API.
 
         Args:

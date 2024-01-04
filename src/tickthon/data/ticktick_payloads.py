@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Collection
 
 from ..task_model import Task
 
@@ -13,19 +13,47 @@ class TicktickPayloads:
             "afterStamp": after_stamp
         }
 
-    @classmethod
-    def complete_task(cls, task_id: str, project_id: str) -> dict:
-        return {
+    @staticmethod
+    def _update_task(task_id: str, project_id: str, status: int | None = None, completed_time: str | None = None,
+                     tags: Collection[str] | None = None):
+        payload = {
             "update": [
                 {
                     "completedUserId": 114478622,
-                    "status": 2,
                     "projectId": project_id,
-                    "completedTime": f"{datetime.utcnow()}+0000",
                     "id": task_id
                 }
             ]
         }
+
+        if status:
+            payload["update"][0]["status"] = status
+
+        if completed_time:
+            payload["update"][0]["completedTime"] = completed_time
+
+        if tags is not None:
+            payload["update"][0]["tags"] = tags
+
+        return payload
+
+    @classmethod
+    def complete_task(cls, task: Task) -> dict:
+        return cls._update_task(task.ticktick_id, task.project_id, status=2, completed_time=f"{datetime.utcnow()}+0000")
+
+    @classmethod
+    def update_task_tags(cls, task: Task, tags: Collection[str]) -> dict:
+        return cls._update_task(task.ticktick_id, task.project_id, tags=tags)
+
+    @classmethod
+    def move_task_to_project(cls, task: Task, project_id: str) -> list[dict]:
+        return [
+            {
+                "fromProjectId": task.project_id,
+                "toProjectId": project_id,
+                "taskId": task.ticktick_id,
+            }
+        ]
 
     @classmethod
     def create_task(cls, task: Task, column_id: Optional[str] = None) -> dict:
