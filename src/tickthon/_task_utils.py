@@ -74,6 +74,11 @@ def _is_task_day_log(task: Task) -> bool:
     return task.project_id == day_logs_list_id
 
 
+def _is_day_log_a_highlight(task: Task) -> bool:
+    """Checks if a day log is a highlight."""
+    return "highlight" in task.tags
+
+
 def _is_task_active(task: Task) -> bool:
     """Checks if a task is active."""
     return task.status == 0 and task.deleted == 0

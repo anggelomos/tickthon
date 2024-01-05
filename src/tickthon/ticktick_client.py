@@ -13,7 +13,7 @@ from .data.ticktick_task_parameters import TicktickTaskParameters as ttp
 from .data.ticktick_list_parameters import TicktickListParameters as tlp
 from .task_model import Task
 from ._task_utils import (_is_task_an_expense_log, _is_task_active,
-                          dict_to_task, _parse_expense_log, _is_task_day_log)
+                          dict_to_task, _parse_expense_log, _is_task_day_log, _is_day_log_a_highlight)
 
 current_date = datetime.utcnow()
 date_two_weeks_ago = (current_date - timedelta(days=14)).strftime("%Y-%m-%d")
@@ -148,15 +148,22 @@ class TicktickClient:
         payload = TicktickPayloads.update_task_tags(task, tags)
         self.ticktick_api.post(self.CRUD_TASK_URL, data=payload, token_required=True)
 
+    def _replace_tags_in_highlight_log(self, task: Task, tags: tuple[str, ...] | None = None):
+        task_tags = ("highlight",) if _is_day_log_a_highlight(task) else tuple()
+        if tags:
+            task_tags += tags
+
+        self.replace_task_tags(task, tuple())
+        self.replace_task_tags(task, task_tags)
+
     def _add_day_log_tags(self, task: Task, task_created_date: datetime, current_date_localized: datetime):
-        if task_created_date >= current_date_localized:
-            self.replace_task_tags(task, task.tags + ("today-log",))
-        elif task_created_date >= (current_date_localized - timedelta(days=1)):
-            self.replace_task_tags(task, task.tags + ("yesterday-log",))
-        else:
-            if len(task.tags) > 0:
-                task_tags = ("highlight",) if "highlight" in task.tags else tuple()
-                self.replace_task_tags(task, task_tags)
+        if task_created_date >= current_date_localized and "today-log" not in task.tags:
+            self._replace_tags_in_highlight_log(task, ("today-log",))
+        elif current_date_localized > task_created_date >= (current_date_localized - timedelta(days=1)) and \
+                "yesterday-log" not in task.tags:
+            self._replace_tags_in_highlight_log(task, ("yesterday-log",))
+        elif task_created_date < (current_date_localized - timedelta(days=1)) and len(task.tags) > 0:
+            self._replace_tags_in_highlight_log(task)
 
     def _process_daily_logs(self):
         """Processes the daily logs."""
@@ -164,7 +171,7 @@ class TicktickClient:
 
         for task in self.all_day_logs:
             if task.project_id == get_ticktick_ids()[tik.LIST_IDS.value][tfK.INBOX_TASKS.value]:
-                self.replace_task_tags(task, tuple())
+                self._replace_tags_in_highlight_log(task)
                 self.move_task_to_project(task, get_ticktick_ids()[tik.LIST_IDS.value][tfK.DAY_LOGS.value])
                 continue
 
