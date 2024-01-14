@@ -5,7 +5,7 @@ from dateutil import parser, tz
 
 from . import ExpenseLog
 from ._config import get_ticktick_ids
-from .data.past_tense_verbs import PAST_TENSE_VERBS
+from .data.day_log_words import PAST_TENSE_VERBS, LOG_EXCEPTION_WORDS
 from .data.ticktick_task_parameters import TicktickTaskParameters as ttp
 from .data.ticktick_id_keys import TicktickIdKeys as tik, TicktickFolderKeys as tfK
 from .task_model import Task
@@ -68,7 +68,10 @@ def _is_task_day_log(task: Task) -> bool:
             return True
 
         title_first_word = task.title.split()[0].lower()
-        if title_first_word.endswith("ed") or title_first_word.endswith("ing") or title_first_word in PAST_TENSE_VERBS:
+        if (title_first_word not in LOG_EXCEPTION_WORDS and
+                (title_first_word.endswith("ed") or
+                 title_first_word.endswith("ing") or
+                 title_first_word in PAST_TENSE_VERBS)):
             return True
 
     return task.project_id == day_logs_list_id
