@@ -116,6 +116,9 @@ class TicktickClient:
         self._cached_raw_active_tasks = raw_active_tasks
         self.all_active_tasks = self._parse_ticktick_tasks(raw_active_tasks, self.project_lists)
 
+        self.all_day_logs = []
+        self.expense_logs = []
+        self.active_tasks = []
         for task in self.all_active_tasks:
             # TODO: Add weight measurements once they are restored
             # if _is_task_a_weight_measurement(task):
@@ -144,16 +147,33 @@ class TicktickClient:
         payload = TicktickPayloads.move_task_to_project(task, project_id)
         self.ticktick_api.post(self.MOVE_TASK_URL, data=payload, token_required=True)
 
-    def replace_task_tags(self, task: Task, tags: tuple[str, ...]):
-        payload = TicktickPayloads.update_task_tags(task, tags)
+    def replace_task_tags(self, task: Task, tags: tuple[str, ...]) -> bool:
+        """Replaces the tags of a task in Ticktick.
+
+        Args:
+            task: Task to replace the tags.
+            tags: Tags to replace the task tags with.
+
+        Returns:
+            True if the tags were replaced successfully, False otherwise.
+        """
+        self._get_all_tasks()
+        tasks_raw_data = [rt for rt in self._cached_raw_active_tasks if rt[tlp.ID] == task.ticktick_id]
+
+        if not tasks_raw_data:
+            return False
+
+        task_raw_data = tasks_raw_data[0]
+        task_raw_data[tlp.TAGS] = tags
+        payload = {"update": [task_raw_data]}
         self.ticktick_api.post(self.CRUD_TASK_URL, data=payload, token_required=True)
+        return True
 
     def _replace_tags_in_highlight_log(self, task: Task, tags: tuple[str, ...] | None = None):
         task_tags = ("highlight",) if _is_day_log_a_highlight(task) else tuple()
         if tags:
             task_tags += tags
 
-        self.replace_task_tags(task, tuple())
         self.replace_task_tags(task, task_tags)
 
     def _add_day_log_tags(self, task: Task, task_created_date: datetime, current_date_localized: datetime):
@@ -169,7 +189,7 @@ class TicktickClient:
         """Processes the daily logs."""
         self._get_all_tasks()
 
-        for task in self.all_day_logs:
+        for task in self.all_day_logs.copy():
             if task.project_id == get_ticktick_ids()[tik.LIST_IDS.value][tfK.INBOX_TASKS.value]:
                 self._replace_tags_in_highlight_log(task)
                 self.move_task_to_project(task, get_ticktick_ids()[tik.LIST_IDS.value][tfK.DAY_LOGS.value])

@@ -15,7 +15,7 @@ class TicktickPayloads:
 
     @staticmethod
     def _update_task(task_id: str, project_id: str, status: int | None = None, completed_time: str | None = None,
-                     tags: Collection[str] | None = None):
+                     tags: Collection[str] | None = None) -> dict:
         payload = {
             "update": [
                 {

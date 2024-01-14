@@ -17,6 +17,7 @@ class TicktickListParameters:
     TRANSFERRED = "transferred"
     GROUP_ID = "groupId"
     VIEW_MODE = "viewMode"
+    TAGS = "tags"
     NOTIFICATION_OPTIONS = "notificationOptions"
     TEAM_ID = "teamId"
     PERMISSION = "permission"

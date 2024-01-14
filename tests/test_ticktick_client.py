@@ -129,11 +129,14 @@ def test_move_task(ticktick_client):
     ticktick_client.complete_task(ticktick_client.get_task(id_move_task))
 
 
-def test_replace_task_tags(ticktick_client):
+@pytest.mark.parametrize("task_tags", [
+    tuple(),
+    ("test-existing-tag",)])
+def test_replace_task_tags(ticktick_client, task_tags):
     inbox_project_id = get_ticktick_ids()[tik.LIST_IDS.value].get(tfK.INBOX_TASKS.value)
     id_task = ticktick_client.create_task(Task(title="Test replace task tags", created_date="2099-09-09",
                                                ticktick_id="test-tags-id", ticktick_etag="test-tags-etag",
-                                               project_id=inbox_project_id))
+                                               project_id=inbox_project_id, tags=task_tags))
 
     replace_tags_task = ticktick_client.get_task(id_task)
 
