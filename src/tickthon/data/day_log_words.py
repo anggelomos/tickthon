@@ -1,4 +1,4 @@
-LOG_EXCEPTION_WORDS = ("meeting", "set")
+LOG_EXCEPTION_WORDS = ("meeting", "set", "put")
 
 PAST_TENSE_VERBS = ("arose",
                     "awoke",
@@ -75,8 +75,6 @@ PAST_TENSE_VERBS = ("arose",
                     "had to",
                     "overtook",
                     "paid",
-                    "put",
-                    "read",
                     "rode",
                     "rang",
                     "rose",
