@@ -15,7 +15,7 @@ class TicktickAPI:
     """Ticktick API client."""
     HOST = "https://api.ticktick.com"
     BASE_URL = "/api/v2"
-    SIGNIN_URL = BASE_URL + "/user/signin?wc=True&remember=True"
+    SIGNIN_URL = BASE_URL + "/user/signon?wc=True&remember=True"
 
     USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:95.0) Gecko/20100101 Firefox/95.0"
     X_DEVICE_ = ('\'{"platform":"web","os":"OS X","device":"Firefox 95.0","name":"unofficial api!","version":4531,'
