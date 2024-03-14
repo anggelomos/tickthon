@@ -13,7 +13,8 @@ from .data.ticktick_task_parameters import TicktickTaskParameters as ttp
 from .data.ticktick_list_parameters import TicktickListParameters as tlp
 from .task_model import Task
 from ._task_utils import (_is_task_an_expense_log, _is_task_active,
-                          dict_to_task, _parse_expense_log, _is_task_day_log, _is_day_log_a_highlight)
+                          dict_to_task, _parse_expense_log, _is_task_day_log, _is_day_log_a_highlight,
+                          _is_task_a_weight_measurement)
 
 current_date = datetime.utcnow()
 date_two_weeks_ago = (current_date - timedelta(days=14)).strftime("%Y-%m-%d")
@@ -120,9 +121,8 @@ class TicktickClient:
         self.expense_logs = []
         self.active_tasks = []
         for task in self.all_active_tasks:
-            # TODO: Add weight measurements once they are restored
-            # if _is_task_a_weight_measurement(task):
-            #     self.weight_measurements.append(task)
+            if _is_task_a_weight_measurement(task):
+                self.weight_measurements.append(task)
             if _is_task_day_log(task):
                 self.all_day_logs.append(task)
             elif _is_task_an_expense_log(task):
