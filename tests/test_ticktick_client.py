@@ -10,7 +10,7 @@ from tickthon._config import get_ticktick_ids
 from tickthon.data.ticktick_id_keys import TicktickIdKeys as tik, TicktickFolderKeys as tfK
 
 
-@pytest.fixture()
+@pytest.fixture(scope="module")
 def ticktick_client(ticktick_info):
     return TicktickClient(ticktick_info["username"], ticktick_info["password"])
 
