@@ -17,6 +17,7 @@ def test_dict_to_task(dict_task):
                          project_id="5f30772022d478db3ad1a9c2",
                          timezone="America/Bogota",
                          due_date="2023-08-03T14:15:00-05:00",
+                         column_id="f934d7e6b5a4f0e9d8c7b6a5f4"
                          )
 
     task = dict_to_task(dict_task)

@@ -122,6 +122,7 @@ def dict_to_task(raw_task: dict) -> Task:
                 project_id=raw_task[ttp.PROJECT_ID.value],
                 timezone=raw_task[ttp.TIMEZONE.value],
                 due_date=_get_task_date(raw_task[ttp.TIMEZONE.value], raw_task.get(ttp.START_DATE.value, None)),
+                column_id=raw_task.get(ttp.COLUMN_ID.value, "")
                 )
 
 
