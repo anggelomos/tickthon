@@ -37,4 +37,5 @@ class TicktickTaskParameters(Enum):
     POMO_DURATION = "pomoDuration"
     STOPWATCH_DURATION = "stopwatchDuration"
     COLUMN_ID = "columnId"
+    PARENT_ID = "parentId"
     KIND = "kind"

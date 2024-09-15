@@ -64,7 +64,7 @@ def test_get_expense_logs(ticktick_client):
             all(isinstance(i[0], Task) and isinstance(i[1], ExpenseLog) for i in expense_logs))
     ticktick_client.complete_task(ticktick_client.get_task(id_expense_log))
 
-
+@pytest.mark.skip(reason="This feature is currently disabled.")
 def test_get_day_logs(ticktick_client):
     day_logs_project_id = get_ticktick_ids()[tik.LIST_IDS.value].get(tfK.DAY_LOGS.value)
     id_day_log = ticktick_client.create_task(Task(title="Test daily log", created_date="2099-09-09",
@@ -77,7 +77,7 @@ def test_get_day_logs(ticktick_client):
     assert (isinstance(day_logs, List))
     ticktick_client.complete_task(ticktick_client.get_task(id_day_log))
 
-
+@pytest.mark.skip(reason="This feature is currently disabled.")
 @pytest.mark.parametrize("log_title", [
     "Tested log",
     "Took test log",
@@ -112,7 +112,7 @@ def test_complete_task(ticktick_client):
     completed_task = ticktick_client.get_task(task_to_complete.ticktick_id)
     assert completed_task.status == 2
 
-
+@pytest.mark.skip(reason="This feature is currently disabled.")
 def test_move_task(ticktick_client):
     inbox_project_id = get_ticktick_ids()[tik.LIST_IDS.value].get(tfK.INBOX_TASKS.value)
     id_move_task = ticktick_client.create_task(Task(title="Test move log", created_date="2099-09-09",

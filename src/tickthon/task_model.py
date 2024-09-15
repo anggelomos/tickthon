@@ -20,6 +20,8 @@ class Task:
         timezone: The timezone of the task.
         due_date: The due date of the task in format YYYY-MM-DD.
         column_id: ID of the column. For example: 4f9e8d7c6b5a4f0e9d8c7b6a5f4
+        parent_id: The ID of the parent task, if the task has no parent the field will be empty.
+                   For example: 6f8a2b3c4d5e1f09a7b6c8d9e0f2
     """
     title: str
     ticktick_id: str = field(eq=str.lower)
@@ -33,3 +35,4 @@ class Task:
     timezone: str = field(default="", eq=str.lower)
     due_date: str = field(default="", eq=str.lower)
     column_id: str = field(default="", eq=str.lower)
+    parent_id: str = field(default="", eq=str.lower)
