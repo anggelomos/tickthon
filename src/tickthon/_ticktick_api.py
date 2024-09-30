@@ -15,10 +15,10 @@ class TicktickAPI:
     """Ticktick API client."""
     HOST = "https://api.ticktick.com"
     BASE_URL = "/api/v2"
-    SIGNIN_URL = BASE_URL + "/user/signon?wc=True&remember=True"
+    SIGNIN_URL = BASE_URL + "/user/signon?wc=true&remember=true"
 
     USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:95.0) Gecko/20100101 Firefox/95.0"
-    X_DEVICE_ = ('\'{"platform":"web","os":"OS X","device":"Firefox 95.0","name":"unofficial api!","version":4531,'
+    X_DEVICE_ = ('\'{"platform":"web","os":"Windows 10","device":"Chrome 123.0.0.0","name":"","version":5303,'
                  '"id":"64907' + secrets.token_hex(19) + '","channel":"website","campaign":"","websocket":""}\'')
 
     HEADERS = {'User-Agent': USER_AGENT,
