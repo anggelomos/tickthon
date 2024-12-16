@@ -1,7 +1,8 @@
+import json
 from enum import Enum
 from typing import Optional
-import secrets
 
+import requests
 from requests import Session, Response
 
 
@@ -15,14 +16,14 @@ class TicktickAPI:
     """Ticktick API client."""
     HOST = "https://api.ticktick.com"
     BASE_URL = "/api/v2"
-    SIGNIN_URL = BASE_URL + "/user/signon?wc=true&remember=true"
+    SIGNIN_URL = HOST + BASE_URL + "/user/signon?wc=true&remember=true"
 
-    USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:95.0) Gecko/20100101 Firefox/95.0"
-    X_DEVICE_ = ('\'{"platform":"web","os":"Windows 10","device":"Chrome 123.0.0.0","name":"","version":5303,'
-                 '"id":"64907' + secrets.token_hex(19) + '","channel":"website","campaign":"","websocket":""}\'')
+    USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:95.0) Gecko/20100101 Firefox/95.0'
+    X_DEVICE_ = '{"platform":"web","os":"Windows 10","device":"Chrome 123.0.0.0","name":"","version":5303,"id":"65f10b61131d8a5bf9e68825","channel":"website","campaign":"","websocket":""}'  # noqa: E501
 
-    HEADERS = {'User-Agent': USER_AGENT,
-               'x-device': X_DEVICE_}
+    SIGNIN_HEADERS = {'User-Agent': USER_AGENT,
+                      'x-device': X_DEVICE_,
+                      'Content-Type': 'application/json'}
 
     def __init__(self, username: str, password: str):
         self.session = Session()
@@ -42,12 +43,12 @@ class TicktickAPI:
         Returns:
             Ticktick authentication token
         """
-        payload = {
+        payload = json.dumps({
             "username": user,
             "password": password
-        }
+        })
 
-        response = self.post(self.SIGNIN_URL, data=payload, token_required=False)
+        response = requests.request("POST", self.SIGNIN_URL, headers=self.SIGNIN_HEADERS, data=payload)
         response.raise_for_status()
 
         return response.json()["token"]
