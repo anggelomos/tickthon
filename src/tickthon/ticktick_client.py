@@ -28,6 +28,7 @@ class TicktickClient:
                                      f"%2004:59:00&status=Abandoned&limit=500"
     DELETED_TASKS_URL = BASE_URL + "/project/all/trash/pagination?start=0&limit=500"
     GENERAL_FOCUS_TIME_URL = BASE_URL + "/pomodoros/statistics/heatmap"
+    ACTIVE_FOCUS_TIME_URL = BASE_URL + "/pomodoros/statistics/dist"
 
     def __init__(self, username: str, password: str, ticktick_list_ids: TicktickListIds):
         self.ticktick_api = TicktickAPI(username, password)
@@ -184,3 +185,22 @@ class TicktickClient:
         raw_time = self.ticktick_api.get(f"{self.GENERAL_FOCUS_TIME_URL}/{clean_date}/{clean_date}").json()
 
         return round(raw_time[0]["duration"] / 60, 2)
+
+    def get_active_focus_time(self, date: str, active_focus_tags: list[str]) -> float:
+        """Gets the active focus time of a day from Ticktick.
+
+        Args:
+            date: Date to get the focus time from in the format YYYY-MM-DD.
+
+        Returns:
+            Active focus time.
+        """
+        clean_date = date.replace("-", "")
+        raw_time = self.ticktick_api.get(f"{self.ACTIVE_FOCUS_TIME_URL}/{clean_date}/{clean_date}").json()
+        tag_time = raw_time.get("tagDurations", {})
+
+        active_focus_time = 0
+        for tag in active_focus_tags:
+            active_focus_time += tag_time.get(tag, 0)
+
+        return round(active_focus_time / 60, 2)
