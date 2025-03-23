@@ -4,10 +4,22 @@ from pathlib import Path
 
 import pytest
 
+from tickthon.data.ticktick_ids import TicktickListIds
+
 
 @pytest.fixture(scope="module")
 def ticktick_info():
-    return {"username": os.getenv("TT_USER"), "password": os.getenv("TT_PASS")}
+    return {
+            "username": os.getenv("TT_USER"), 
+            "password": os.getenv("TT_PASS"),
+            "ticktick_ids": TicktickListIds(
+                INBOX="inbox114478622",
+                TODAY_BACKLOG="6616e1af8f08b66b69c7a5c5",
+                WEEK_BACKLOG="61c62f198f08c92d0584f678",
+                MONTH_BACKLOG="61c634f58f08c92d058540ba",
+                WEIGHT_MEASUREMENTS="640c03cd8f08d5a6c4bb32e7"
+            )
+            }
 
 
 @pytest.fixture(scope="session")

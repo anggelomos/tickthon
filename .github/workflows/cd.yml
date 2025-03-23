@@ -13,7 +13,6 @@ on: [push, workflow_dispatch]
 env:
   TT_USER: ${{ secrets.TT_USER }}
   TT_PASS: ${{ secrets.TT_PASS }}
-  TICKTICK_IDS: ${{ secrets.TICKTICK_IDS }}
 
 permissions:
   contents: read

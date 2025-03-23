@@ -3,7 +3,7 @@ from typing import Tuple
 from attrs import define, field
 
 
-@define(frozen=True)
+@define
 class Task:
     """ Represents a Ticktick task.
 

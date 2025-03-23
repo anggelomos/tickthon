@@ -10,7 +10,7 @@ tickthon = ["py.typed"]
 
 [project]
 name = "tickthon"
-version = "0.2.0"
+version = "0.3.0"
 description = "Yet another unofficial Ticktick API client, it is based on ticktick-py"
 readme = "README.md"
 authors = [{name = "anggelomos", email = "anggelomos@outlook.com"}]

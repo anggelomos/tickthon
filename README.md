@@ -9,9 +9,18 @@ pip install tickthon
 ## Usage
 
 ```python
-from tickthon import TicktickClient
+from tickthon import TicktickClient, TicktickListIds
 
-client = TicktickClient(username, password)
+client = TicktickClient(username, 
+                        password, 
+                        TicktickListIds(
+                            INBOX="inbox-list-id",
+                            TODAY_BACKLOG="today-list-id",
+                            WEEK_BACKLOG="week-list-id",
+                            MONTH_BACKLOG="month-list-id",
+                            WEIGHT_MEASUREMENTS="weight-measurements-list-id"
+                        )
+            )
 client.get_active_tasks()
 ```
 
@@ -27,10 +36,10 @@ client.get_active_tasks()
 - get_habits()
 - complete_task(Task)
 - create_task(Task, column_id)
-
+- move_task_to_project(Task, project_id)
 
 ## Task model
-This packages uses a custom attrs model to store task data, it has the following attributes:
+This package uses a custom attrs model to store task data, it has the following attributes:
 
 Task:
 - title: str 
@@ -47,21 +56,3 @@ Task:
 ## Environment variables
 - TT_USER: Ticktick username
 - TT_PASS: Ticktick password
-- TICKTICK_IDS: This environment variable is a JSON string that specifies the TickTick lists and folders from which 
-  tasks will be fetched, if you don't set this environment variable all tasks will be fetched. It follows this structure:
-
-for example:
-```json
-{
-  "FOLDER_IDS": {
-    "folder_name-1": "folder_id",
-    "folder_name-2": "folder_id",
-    ...
-  },
-  "LIST_IDS": {
-    "list_name-1": "list_id",
-    "list_name-2": "list_id",
-    ...
-  }
-}
-```

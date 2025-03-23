@@ -2,7 +2,7 @@ import math
 
 import attrs
 from tickthon import Task, dict_to_task
-from tickthon._task_utils import _get_focus_time, _get_task_date
+from tickthon._task_utils import get_focus_time, get_task_date
 
 
 def test_dict_to_task(dict_task):
@@ -31,7 +31,7 @@ def test_get_ticktick_focus_time():
                                           {"pomoDuration": 260, "stopwatchDuration": 0},
                                           ]}
 
-    focus_time = _get_focus_time(rawt_focus_time)
+    focus_time = get_focus_time(rawt_focus_time)
 
     assert math.isclose(focus_time, 0.1)
 
@@ -39,7 +39,7 @@ def test_get_ticktick_focus_time():
 def test_get_focus_time():
     raw_focus_time = {"focus_time": 0.1}
 
-    focus_time = _get_focus_time(raw_focus_time)
+    focus_time = get_focus_time(raw_focus_time)
 
     assert math.isclose(focus_time, 0.1)
 
@@ -48,6 +48,6 @@ def test_get_date():
     raw_task_date = "2023-08-03T19:15:00.000+0000"
     raw_timezone = "America/Bogota"
 
-    task_date = _get_task_date(raw_timezone, raw_task_date)
+    task_date = get_task_date(raw_timezone, raw_task_date)
 
     assert task_date == "2023-08-03T14:15:00-05:00"
