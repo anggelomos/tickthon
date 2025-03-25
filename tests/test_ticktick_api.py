@@ -10,16 +10,19 @@ def ticktick_api(ticktick_info):
 
 
 def test_login(ticktick_api, ticktick_info):
-    token = ticktick_api.login(ticktick_info["username"], ticktick_info["password"])
+    token, cookies = ticktick_api._login(ticktick_info["username"], ticktick_info["password"])
 
     assert isinstance(token, str)
     assert token != ""
     assert token.isalnum()
+    
+    assert isinstance(cookies, dict)
+    assert cookies != {}
 
 
 def test_login_with_wrong_credentials(ticktick_api):
     with pytest.raises(HTTPError):
-        ticktick_api.login("wrong-username", "wrong-password")
+        ticktick_api._login("wrong-username", "wrong-password")
 
 
 def test_get_request(ticktick_api):

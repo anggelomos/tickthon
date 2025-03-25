@@ -16,7 +16,7 @@ date_tomorrow = (current_date + timedelta(days=1)).strftime("%Y-%m-%d")
 
 class TicktickClient:
     """Ticktick client."""
-    BASE_URL = "/api/v2"
+    BASE_URL = TicktickAPI.BASE_URL
     GET_STATE_URL = BASE_URL + "/batch/check/0"
     CRUD_TASK_URL = BASE_URL + "/batch/task"
     MOVE_TASK_URL = BASE_URL + "/batch/taskProject"
@@ -30,8 +30,13 @@ class TicktickClient:
     GENERAL_FOCUS_TIME_URL = BASE_URL + "/pomodoros/statistics/heatmap"
     ACTIVE_FOCUS_TIME_URL = BASE_URL + "/pomodoros/statistics/dist"
 
-    def __init__(self, username: str, password: str, ticktick_list_ids: TicktickListIds):
-        self.ticktick_api = TicktickAPI(username, password)
+    def __init__(self,
+                 username: str,
+                 password: str,
+                 ticktick_list_ids: TicktickListIds,
+                 api_token: str | None = None,
+                 cookies: dict[str, str] | None = None):
+        self.ticktick_api = TicktickAPI(username, password, api_token, cookies)
         self.ticktick_data: dict = {}
         self.ticktick_list_ids: TicktickListIds = ticktick_list_ids
         self._cached_raw_active_tasks: list[dict] = []
@@ -70,7 +75,7 @@ class TicktickClient:
 
     def move_task_to_project(self, task: Task, project_id: str):
         payload = TicktickPayloads.move_task_to_project(task, project_id)
-        self.ticktick_api.post(self.MOVE_TASK_URL, data=payload, token_required=True)
+        self.ticktick_api.post(self.MOVE_TASK_URL, data=payload)
 
     def replace_task_tags(self, task: Task, tags: tuple[str, ...]) -> bool:
         """Replaces the tags of a task in Ticktick.
@@ -91,7 +96,7 @@ class TicktickClient:
         task_raw_data = tasks_raw_data[0]
         task_raw_data[tlp.TAGS] = tags
         payload = {"update": [task_raw_data]}
-        self.ticktick_api.post(self.CRUD_TASK_URL, data=payload, token_required=True)
+        self.ticktick_api.post(self.CRUD_TASK_URL, data=payload)
         return True
 
     def get_active_tasks(self) -> list[Task]:
@@ -150,13 +155,13 @@ class TicktickClient:
         Returns:
             Task or dictionary with the task information.
         """
-        task = self.ticktick_api.get(f"{self.TASK_URL}/{task_id}", token_required=True).json()
+        task = self.ticktick_api.get(f"{self.TASK_URL}/{task_id}").json()
         return dict_to_task(task)
 
     def complete_task(self, task: Task):
         """Completes a task in Ticktick using the API."""
         payload = TicktickPayloads.complete_task(task)
-        self.ticktick_api.post(self.CRUD_TASK_URL, data=payload, token_required=True)
+        self.ticktick_api.post(self.CRUD_TASK_URL, data=payload)
 
     def create_task(self, task: Task, column_id: str | None = None) -> str:
         """Creates a task in Ticktick using the API.
@@ -169,7 +174,7 @@ class TicktickClient:
             Ticktick id of the created task.
         """
         payload = TicktickPayloads.create_task(task, column_id)
-        response = self.ticktick_api.post(self.CRUD_TASK_URL, payload, token_required=True).json()
+        response = self.ticktick_api.post(self.CRUD_TASK_URL, payload).json()
         return list(response["id2etag"].keys())[0]
 
     def get_overall_focus_time(self, date: str) -> float:
