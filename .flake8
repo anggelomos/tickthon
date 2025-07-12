@@ -2,4 +2,6 @@
 max-line-length = 120
 exclude = tests/*,
           src/tickthon/__init__.py
+          build/*
+          sandbox_playground/*
 max-complexity = 10

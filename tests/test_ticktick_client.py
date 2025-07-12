@@ -1,12 +1,9 @@
-import json
 from datetime import datetime
-from typing import List
 
 import pytest
 
 from tickthon import Task
 from tickthon import TicktickClient
-from tickthon.data.ticktick_ids import TicktickListIds
 
 
 @pytest.fixture(scope="module")

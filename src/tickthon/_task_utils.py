@@ -42,7 +42,8 @@ def dict_to_task(raw_task: dict) -> Task:
     """
     return Task(ticktick_id=raw_task[ttp.ID.value],
                 ticktick_etag=raw_task[ttp.ETAG.value],
-                created_date=get_task_date(raw_task[ttp.TIMEZONE.value], raw_task.get(ttp.CREATED_TIME.value, None)),
+                created_date=get_task_date(raw_task.get(ttp.TIMEZONE.value, ""),
+                                           raw_task.get(ttp.CREATED_TIME.value, None)),
                 status=raw_task[ttp.STATUS.value],
                 title=raw_task[ttp.TITLE.value].strip(),
                 focus_time=get_focus_time(raw_task),
@@ -76,7 +77,7 @@ def get_focus_time(raw_task: dict) -> float:
     return focus_time
 
 
-def get_task_date(raw_task_timezone: str, task_date: str) -> str:
+def get_task_date(raw_task_timezone: str, task_date: str | None) -> str:
     """Returns the date of a task taking into account the timezone.
 
     Args:
