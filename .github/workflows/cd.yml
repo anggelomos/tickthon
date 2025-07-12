@@ -32,17 +32,20 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install build wheel
-        pip install -e .[dev]
+        pip install build wheel poetry
+        poetry install
 
+    - name: Lint with ruff
+      run: poetry run ruff check
+    
     - name: Lint with flake8
-      run: flake8 src
+      run: poetry run flake8 src
 
     - name: Lint with mypy
-      run: mypy src
+      run: poetry run mypy src
 
     - name: Test with pytest
-      run: pytest --cov
+      run: poetry run pytest --cov
 
     - name: Build package
       run: python -m build

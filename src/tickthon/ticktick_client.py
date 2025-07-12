@@ -74,6 +74,12 @@ class TicktickClient:
                 logging.warning(f"Task {task} does not have a valid status")
 
     def move_task_to_project(self, task: Task, project_id: str):
+        """Moves a task from one project (list) to another in Ticktick.
+
+        Args:
+            task: Task to move.
+            project_id: Project id to move the task to.
+        """
         payload = TicktickPayloads.move_task_to_project(task, project_id)
         self.ticktick_api.post(self.MOVE_TASK_URL, data=payload)
 
@@ -209,3 +215,15 @@ class TicktickClient:
             active_focus_time += tag_time.get(tag, 0)
 
         return round(active_focus_time / 60, 2)
+
+    def get_tasks_by_list(self, list_ids: list[str]) -> list[Task]:
+        """Gets all tasks from Ticktick by list ids.
+
+        Args:
+            list_ids: List ids to get the tasks from.
+
+        Returns:
+            Tasks.
+        """
+        self._get_all_tasks()
+        return [task for task in self.all_active_tasks if task.project_id in list_ids]
