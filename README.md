@@ -29,15 +29,14 @@ client.get_active_tasks()
 - get_completed_tasks()
 - get_deleted_tasks()
 - get_abandoned_tasks()
-- get_expense_logs()
-- get_day_logs()
 - get_task(task_id)
 - get_overall_focus_time(date)
-- get_active_focus_time(date, focus_tags_list)
-- get_habits()
+- get_active_focus_time(date, active_focus_tags)
+- get_tasks_by_list(list_ids)
 - complete_task(Task)
 - create_task(Task, column_id)
 - move_task_to_project(Task, project_id)
+- replace_task_tags(Task, tags)
 
 ## Task model
 This package uses a custom attrs model to store task data, it has the following attributes:

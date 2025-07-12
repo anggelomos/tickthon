@@ -6,6 +6,7 @@ import pytest
 
 from tickthon import Task
 from tickthon import TicktickClient
+from tickthon.data.ticktick_ids import TicktickListIds
 
 
 @pytest.fixture(scope="module")
@@ -89,3 +90,17 @@ def test_get_overall_focus_time(ticktick_client):
 
     assert isinstance(focus_time, float)
     assert focus_time >= 0
+
+
+def test_get_tasks_by_list(ticktick_client):
+    test_list_id = ["687294a88f083d563d177ee6"]
+    task_names = ["Test task - c13-bdb6", "Test task - e01f9b37-f6c0", "Test task - cb10f316ee1"]
+    original_inbox_id = ticktick_client.ticktick_list_ids.INBOX
+    ticktick_client.ticktick_list_ids.INBOX = test_list_id[0]
+    ticktick_client._cached_raw_active_tasks = []
+
+    tasks = ticktick_client.get_tasks_by_list(test_list_id)
+
+    ticktick_client.ticktick_list_ids.INBOX = original_inbox_id
+    assert len(tasks) == len(task_names)
+    assert all(task.title in task_names for task in tasks)

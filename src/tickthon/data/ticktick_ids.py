@@ -9,6 +9,7 @@ class TicktickListIds:
     WEEK_BACKLOG: str
     MONTH_BACKLOG: str
     WEIGHT_MEASUREMENTS: str
+    
 
     def get_ids(self) -> list[str]:
         """Returns a list of all backlog values."""
