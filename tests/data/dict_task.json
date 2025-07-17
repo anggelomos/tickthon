@@ -17,12 +17,24 @@
   "progress": 0,
   "focusSummaries": [
     {
+      "userId": 114478622,
+      "pomoCount": 0,
+      "estimatedPomo": 0,
+      "estimatedDuration": 0,
       "pomoDuration": 0,
-      "stopwatchDuration": 100
-    },
-    {
-      "pomoDuration": 260,
-      "stopwatchDuration": 0
+      "stopwatchDuration": 0,
+      "focuses": [
+        [
+          "687131e6f6019101b3683227",
+          1,
+          180
+        ],
+        [
+          "6877959e4107d109cd26b2c8",
+          0,
+          180
+        ]
+      ]
     }
   ],
   "modifiedTime": "2021-07-21T21:33:17.796+0000",

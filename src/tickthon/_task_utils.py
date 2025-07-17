@@ -1,3 +1,4 @@
+from functools import reduce
 from dateutil import parser, tz
 
 from tickthon.data.ticktick_ids import TicktickListIds
@@ -68,9 +69,10 @@ def get_focus_time(raw_task: dict) -> float:
     """
     focus_time = 0.0
     if ttp.FOCUS_SUMMARIES.value in raw_task:
-        raw_focus_time = map(lambda summary: summary[ttp.POMO_DURATION.value] + summary[ttp.STOPWATCH_DURATION.value],
-                             raw_task[ttp.FOCUS_SUMMARIES.value])
-        focus_time = round(sum(raw_focus_time) / 3600, 2)
+        for focus_summary in raw_task[ttp.FOCUS_SUMMARIES.value]:
+            raw_focus_time = reduce(lambda acc, summary: acc + summary[2], focus_summary.get("focuses", []), 0)
+            focus_time += raw_focus_time
+        focus_time = round(focus_time / 3600, 2)
     elif ttp.FOCUS_TIME.value in raw_task:
         focus_time = float(raw_task[ttp.FOCUS_TIME.value])
 

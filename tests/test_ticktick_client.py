@@ -91,7 +91,8 @@ def test_get_overall_focus_time(ticktick_client):
 
 def test_get_tasks_by_list(ticktick_client):
     test_list_id = ["687294a88f083d563d177ee6"]
-    task_names = ["Test task - c13-bdb6", "Test task - e01f9b37-f6c0", "Test task - cb10f316ee1"]
+    task_names = ["Test task - c13-bdb6", "Test task - e01f9b37-f6c0", "Test task - cb10f316ee1", "Test Existing Task Static",
+                  "Test Existing Task With Missing Data", "Test Existing Task to Update"]
     original_inbox_id = ticktick_client.ticktick_list_ids.INBOX
     ticktick_client.ticktick_list_ids.INBOX = test_list_id[0]
     ticktick_client._cached_raw_active_tasks = []

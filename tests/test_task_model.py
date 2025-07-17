@@ -27,9 +27,28 @@ def test_dict_to_task(dict_task):
 
 
 def test_get_ticktick_focus_time():
-    rawt_focus_time = {"focusSummaries": [{"pomoDuration": 0, "stopwatchDuration": 100},
-                                          {"pomoDuration": 260, "stopwatchDuration": 0},
-                                          ]}
+    rawt_focus_time = {"focusSummaries": [
+    {
+      "userId": 114478622,
+      "pomoCount": 0,
+      "estimatedPomo": 0,
+      "estimatedDuration": 0,
+      "pomoDuration": 0,
+      "stopwatchDuration": 0,
+      "focuses": [
+        [
+          "687131e6f6019101b3683227",
+          1,
+          180
+        ],
+        [
+          "6877959e4107d109cd26b2c8",
+          0,
+          180
+        ]
+      ]
+    }
+  ]}
 
     focus_time = get_focus_time(rawt_focus_time)
 
