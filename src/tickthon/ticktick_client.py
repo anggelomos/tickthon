@@ -1,6 +1,8 @@
 import logging
 from datetime import datetime, timedelta, timezone
 
+from tickthon.data.task_types import TaskType
+
 
 from ._ticktick_api import TicktickAPI
 from .data.ticktick_payloads import TicktickPayloads
@@ -216,14 +218,24 @@ class TicktickClient:
 
         return round(active_focus_time / 60, 2)
 
-    def get_tasks_by_list(self, list_ids: list[str]) -> list[Task]:
+    def get_tasks_by_list(self, list_ids: list[str], task_type: TaskType = TaskType.ACTIVE) -> list[Task]:
         """Gets all tasks from Ticktick by list ids.
 
         Args:
             list_ids: List ids to get the tasks from.
+            task_type: Type of tasks to get.
 
         Returns:
-            Tasks.
+            The list of Tasks that match the criteria.
         """
-        self._get_all_tasks()
-        return [task for task in self.all_active_tasks if task.project_id in list_ids]
+        matching_tasks = []
+
+        if task_type == TaskType.ACTIVE or task_type == TaskType.ALL:
+            self._get_all_tasks()
+            matching_tasks.extend(self.all_active_tasks)
+
+        if task_type == TaskType.COMPLETED or task_type == TaskType.ALL:
+            completed_tasks = self.get_completed_tasks()
+            matching_tasks.extend(completed_tasks)
+
+        return [task for task in matching_tasks if task.project_id in list_ids]
